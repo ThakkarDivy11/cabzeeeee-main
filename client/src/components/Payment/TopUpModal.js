@@ -59,10 +59,10 @@ const TopUpModal = ({ isOpen, onClose, onSuccess, savedPaymentMethods = [] }) =>
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm pointer-events-auto">
-      <div className="w-full max-w-md rounded-[2.5rem] border border-white/10 bg-[#0b1120]/95 p-8 text-slate-200 shadow-2xl shadow-purple-500/20">
+      <div className="w-full max-w-md rounded-[2.5rem] border p-8 shadow-2xl" style={{backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)'}}>
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-2xl font-black uppercase tracking-tight text-slate-100">Top Up Wallet</h2>
-          <button onClick={onClose} className="rounded-full p-2 transition-colors hover:bg-white/10">
+          <h2 className="text-2xl font-black uppercase tracking-tight" style={{color: '#1A1A1A'}}>Top Up Wallet</h2>
+          <button onClick={onClose} className="rounded-full p-2 transition-colors" style={{color: '#1A1A1A'}} onMouseEnter={e => e.currentTarget.style.backgroundColor='#F0F0F0'} onMouseLeave={e => e.currentTarget.style.backgroundColor='transparent'}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -73,45 +73,47 @@ const TopUpModal = ({ isOpen, onClose, onSuccess, savedPaymentMethods = [] }) =>
           <form onSubmit={handleInitiateTopUp} className="space-y-6">
             {savedPaymentMethods.length > 0 && (
               <div className="space-y-2">
-                <label className="block text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <label className="block text-center text-[10px] font-black uppercase tracking-widest" style={{color: '#555555'}}>
                   Pay with saved card (optional)
                 </label>
                 <select
                   value={selectedPaymentMethodId}
                   onChange={(e) => setSelectedPaymentMethodId(e.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-slate-100 focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-400"
+                  className="w-full rounded-2xl px-4 py-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                  style={{color: '#1A1A1A', backgroundColor: '#F0F0F0', border: '1.5px solid #E0E0E0'}}
                 >
-                  <option value="">Use a new card</option>
+                  <option value="" style={{color: '#1A1A1A', backgroundColor: '#FFFFFF'}}>Use a new card</option>
                   {savedPaymentMethods.map((pm) => (
-                    <option key={pm.id} value={pm.id}>
+                    <option key={pm.id} value={pm.id} style={{color: '#1A1A1A', backgroundColor: '#FFFFFF'}}>
                       {(pm.brand || 'CARD').toUpperCase()} ending {pm.last4} (exp {pm.exp_month}/{pm.exp_year})
                     </option>
                   ))}
                 </select>
-                <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                <p className="text-center text-[10px] font-bold uppercase tracking-widest" style={{color: '#888888'}}>
                   Selecting a saved card skips card entry
                 </p>
               </div>
             )}
 
             <div>
-              <label className="mb-3 block text-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+              <label className="mb-3 block text-center text-[10px] font-black uppercase tracking-widest" style={{color: '#555555'}}>
                 Enter Amount (INR)
               </label>
               <div className="relative">
-                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-black text-purple-300/60">Rs.</span>
+                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-black" style={{color: '#7C3AED'}}>Rs.</span>
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="w-full rounded-[2rem] border border-white/10 bg-white/5 py-8 pl-16 pr-6 text-center text-4xl font-black text-slate-100 transition-all outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/40"
+                  className="w-full rounded-[2rem] py-8 pl-16 pr-6 text-center text-4xl font-black transition-all outline-none focus:ring-2 focus:ring-purple-400/50"
+                  style={{color: '#1A1A1A', backgroundColor: '#F5F5F5', border: '1.5px solid #E0E0E0'}}
                   autoFocus
                   required
                   min="50"
                 />
               </div>
-              <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Minimum top-up: Rs. 50</p>
+              <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-widest" style={{color: '#888888'}}>Minimum top-up: Rs. 50</p>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
@@ -120,7 +122,10 @@ const TopUpModal = ({ isOpen, onClose, onSuccess, savedPaymentMethods = [] }) =>
                   key={val}
                   type="button"
                   onClick={() => setAmount(val.toString())}
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-black text-slate-200 transition-all hover:border-purple-400/40 hover:bg-purple-500/10 active:scale-95"
+                  className="rounded-2xl px-4 py-3 text-xs font-black transition-all active:scale-95 hover:border-purple-400"
+                  style={{color: '#1A1A1A', backgroundColor: '#F0F0F0', border: '1.5px solid #E0E0E0'}}
+                  onMouseEnter={e => { e.currentTarget.style.backgroundColor='#EDE9FE'; e.currentTarget.style.borderColor='#7C3AED'; e.currentTarget.style.color='#7C3AED'; }}
+                  onMouseLeave={e => { e.currentTarget.style.backgroundColor='#F0F0F0'; e.currentTarget.style.borderColor='#E0E0E0'; e.currentTarget.style.color='#1A1A1A'; }}
                 >
                   +Rs.{val}
                 </button>
@@ -136,8 +141,8 @@ const TopUpModal = ({ isOpen, onClose, onSuccess, savedPaymentMethods = [] }) =>
             </button>
           </form>
         ) : (
-          <div className="animate-in slide-in-from-right duration-500">
-            <Elements stripe={stripePromise} options={{ clientSecret }}>
+          <div className="animate-in slide-in-from-right duration-500" style={{backgroundColor: '#FFFFFF'}}>
+            <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe', variables: { colorBackground: '#FFFFFF', colorText: '#1A1A1A', colorDanger: '#DC2626', fontFamily: 'inherit', borderRadius: '12px' } } }}>
               <CheckoutForm
                 clientSecret={clientSecret}
                 amount={amount}

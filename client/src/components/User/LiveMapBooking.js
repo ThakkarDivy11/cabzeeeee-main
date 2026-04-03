@@ -305,7 +305,7 @@ const LiveMapBooking = () => {
                 {/* Header */}
                 <div className="absolute top-0 left-0 right-0 z-[1000] p-4 pointer-events-none">
                     <div className="flex flex-col gap-2 max-w-md mx-auto">
-                        <div className="pointer-events-auto flex items-center justify-between rounded-2xl border border-purple-300/30 bg-[#5b21b6] p-4 text-white shadow-2xl shadow-purple-500/25">
+                        <div className="pointer-events-auto flex items-center justify-between rounded-2xl border border-purple-300/30 bg-[#0ea5e9] p-4 text-white shadow-2xl shadow-purple-500/25">
                             <div className="flex items-center">
                                 <button onClick={() => navigate('/rider')} className="mr-2 p-2 text-purple-200/80 transition-colors hover:text-white">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -321,7 +321,7 @@ const LiveMapBooking = () => {
                             </button>
                         </div>
 
-                    <div className="pointer-events-auto space-y-4 rounded-2xl border border-purple-300/30 bg-[#6d28d9] p-6 text-white shadow-2xl shadow-purple-500/30">
+                    <div className="pointer-events-auto space-y-4 rounded-2xl border border-purple-300/30 bg-[#0891b2] p-6 text-white shadow-2xl shadow-purple-500/30">
                         {/* Manual input */}
                         {step !== 'confirm' && (
                             <div className="space-y-2">
@@ -350,8 +350,8 @@ const LiveMapBooking = () => {
                                                 onClick={() => handleSelectSearchResult(r)}
                                                 className="w-full border-b border-white/5 px-4 py-3 text-left hover:bg-purple-400/15 last:border-b-0"
                                             >
-                                                <p className="line-clamp-2 text-sm font-semibold text-white">{r?.display_name}</p>
-                                                <p className="mt-1 text-[11px] font-bold tracking-wide text-purple-100/60">
+                                                <p className="line-clamp-2 text-sm font-semibold" style={{color: '#FFFFFF'}}>{r?.display_name}</p>
+                                                <p className="mt-1 text-[11px] font-bold tracking-wide" style={{color: '#CCCCCC'}}>
                                                     Tap to use this location
                                                 </p>
                                             </button>
@@ -443,7 +443,7 @@ const LiveMapBooking = () => {
             </div>
 
             {/* Bottom Actions */}
-            <div className="z-[1000] rounded-t-[3rem] border-t border-white/10 bg-[#0b1120]/92 p-8 shadow-[0_-20px_50px_-12px_rgba(124,58,237,0.28)] backdrop-blur-xl">
+            <div className="z-[1000] rounded-t-[3rem] border-t border-white/10 bg-[#0b1120]/92 p-8 shadow-[0_-20px_50px_-12px_rgba(14,165,233,0.28)] backdrop-blur-xl">
                 {step === 'pickup' && (
                     <button
                         onClick={handleConfirmPickup}

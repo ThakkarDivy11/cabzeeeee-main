@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
     "./public/index.html",
@@ -18,23 +19,23 @@ module.exports = {
           DEFAULT: '#020617',
           dark:    '#050d24',
         },
-        /* Purple accent palette */
+        /* Teal accent palette */
         purple: {
-          50:  '#faf5ff',
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          300: '#d8b4fe',
-          400: '#c084fc',
-          500: '#a855f7',
-          600: '#9333ea',
-          700: '#7c3aed',
-          800: '#6d28d9',
-          900: '#4c1d95',
+          50:  '#ecfeff',
+          100: '#cffafe',
+          200: '#a5f3fc',
+          300: '#67e8f9',
+          400: '#22d3ee',
+          500: '#06b6d4',
+          600: '#0891b2',
+          700: '#0e7490',
+          800: '#155e75',
+          900: '#164e63',
         },
         indigo: {
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
         },
         /* sky-blue kept for compat but de-emphasised */
         'sky-blue': {
@@ -44,13 +45,13 @@ module.exports = {
           300: '#93d2fd',
           400: '#60b8fa',
           500: '#3a9cf6',
-          DEFAULT: '#7C3AED',
-          600: '#7C3AED',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
-          dark:  '#6d28d9',
-          light: '#a78bfa',
+          DEFAULT: '#0ea5e9',
+          600: '#0ea5e9',
+          700: '#0284c7',
+          800: '#0369a1',
+          900: '#075985',
+          dark:  '#0ea5e9',
+          light: '#7dd3fc',
         },
         /* Semantic color tokens */
         success: {
@@ -69,22 +70,22 @@ module.exports = {
 
       fontFamily: {
         /* Body font — highly readable */
-        jakarta: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        sans:    ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        jakarta: ['-apple-system', 'BlinkMacSystemFont', '"San Francisco"', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        sans:    ['-apple-system', 'BlinkMacSystemFont', '"San Francisco"', '"Segoe UI"', 'Roboto', 'sans-serif'],
         /* Display/heading font — for large UI text */
-        outfit:  ['"Outfit"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        outfit:  ['-apple-system', 'BlinkMacSystemFont', '"San Francisco"', '"Segoe UI"', 'Roboto', 'sans-serif'],
       },
 
       boxShadow: {
-        /* Elevation system — dark purple theme */
+        /* Elevation system — dark teal theme */
         'level-1': '0 1px 3px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2)',
         'level-2': '0 4px 16px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3)',
         'level-3': '0 24px 64px rgba(0,0,0,0.6)',
-        'navy':    '0 8px 32px rgba(124,58,237,0.2)',
-        'accent':  '0 8px 24px rgba(124,58,237,0.35)',
-        'lift':    '0 8px 32px rgba(124,58,237,0.15)',
-        'purple':  '0 0 30px rgba(124,58,237,0.3)',
-        'glow':    '0 0 40px rgba(168,85,247,0.2)',
+        'navy':    '0 8px 32px rgba(14,165,233,0.2)',
+        'accent':  '0 8px 24px rgba(14,165,233,0.35)',
+        'lift':    '0 8px 32px rgba(14,165,233,0.15)',
+        'purple':  '0 0 30px rgba(14,165,233,0.3)',
+        'glow':    '0 0 40px rgba(14,165,233,0.2)',
       },
 
       borderRadius: {

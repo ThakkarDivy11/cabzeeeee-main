@@ -87,7 +87,7 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-navy/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/10 backdrop-blur-sm lg:hidden dark:bg-black/60"
           onClick={closeSidebar}
         />
       )}
@@ -95,7 +95,7 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
       {/* Sidebar */}
       <div
         className={`
-          fixed inset-y-0 left-0 z-50 bg-[#020617] border-r border-white/10 text-slate-200 flex flex-col
+          fixed inset-y-0 left-0 z-50 bg-white border-r border-[#e5e5e5] text-black flex flex-col dark:bg-black/40 dark:border-white/10 dark:text-white dark:backdrop-blur
           lg:translate-x-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
@@ -106,14 +106,14 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
         }}
       >
         {/* Brand + collapse toggle */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-white/8 flex-shrink-0">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-[#e5e5e5] flex-shrink-0 dark:border-white/10">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-purple-700/50 border border-purple-500/30 flex items-center justify-center flex-shrink-0 shadow-purple">
-              <span className="text-white font-black text-sm leading-none">CZ</span>
+              <span className="text-black font-black text-sm leading-none dark:text-white">CZ</span>
             </div>
             {!collapsed && (
               <span
-                className="font-black text-soft-white text-base tracking-tight font-outfit leading-none"
+                className="font-black text-black text-base tracking-tight font-outfit leading-none dark:text-white"
                 style={{ transition: 'opacity 0.15s ease', whiteSpace: 'nowrap' }}
               >
                 CabZee
@@ -123,7 +123,7 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
           {/* Collapse toggle — desktop only */}
           <button
             onClick={() => setCollapsed(c => !c)}
-            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-soft-white/40 hover:text-soft-white hover:bg-white/8 transition-colors flex-shrink-0"
+            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-black/60 hover:text-black hover:bg-black/5 transition-colors flex-shrink-0 dark:text-white/60 dark:hover:text-white dark:hover:bg-white/10"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -156,8 +156,8 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
                 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold
                 transition-all duration-200 group relative
                 ${isActive
-                  ? 'bg-purple-500/20 text-purple-300 border-l-[3px] border-purple-400 pl-[calc(0.75rem-3px)] shadow-sm'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-slate-200 border-l-[3px] border-transparent pl-[calc(0.75rem-3px)]'
+                  ? 'bg-purple-500/10 text-black border-l-[3px] border-purple-600 pl-[calc(0.75rem-3px)] shadow-sm dark:bg-purple-500/20 dark:text-purple-200 dark:border-purple-400'
+                  : 'text-black hover:bg-black/5 border-l-[3px] border-transparent pl-[calc(0.75rem-3px)] dark:text-gray-300 dark:hover:bg-white/10'
                 }
               `}
             >
@@ -178,9 +178,10 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
               {collapsed && (
                 <span
                   className="
-                    absolute left-full ml-3 px-2.5 py-1 bg-[#1a1130] border border-purple-500/20 rounded-lg text-xs text-slate-200
+                    absolute left-full ml-3 px-2.5 py-1 bg-white border border-[#e5e5e5] rounded-lg text-xs text-black
                     opacity-0 group-hover:opacity-100 pointer-events-none
                     whitespace-nowrap z-10 shadow-level-2
+                    dark:bg-[#111827] dark:border-white/10 dark:text-white
                   "
                   style={{ transition: 'opacity 0.15s ease' }}
                 >
@@ -192,19 +193,19 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
         </nav>
 
         {/* User info + logout */}
-        <div className="flex-shrink-0 p-3 border-t border-white/8">
+        <div className="flex-shrink-0 p-3 border-t border-[#e5e5e5] dark:border-white/10">
           {!collapsed ? (
             <div className="flex items-center gap-3 px-2 py-2">
               <div className="w-8 h-8 rounded-full bg-purple-600/80 border border-purple-500/30 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                 {user?.name?.charAt(0)?.toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-200 truncate leading-tight">{user?.name}</p>
-                <p className="text-xs text-slate-500 capitalize leading-tight">{user?.role}</p>
+                <p className="text-sm font-semibold text-black truncate leading-tight dark:text-white">{user?.name}</p>
+                <p className="text-xs text-black capitalize leading-tight dark:text-gray-400">{user?.role}</p>
               </div>
               <button
                 onClick={handleLogout}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-soft-white/40 hover:text-danger hover:bg-danger/10 transition-colors flex-shrink-0"
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-black/60 hover:text-danger hover:bg-danger/10 transition-colors flex-shrink-0 dark:text-white/60"
                 title="Sign out"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

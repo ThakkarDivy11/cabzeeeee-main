@@ -61,18 +61,19 @@ const CheckoutForm = ({ clientSecret, amount, onSuccess, onCancel, paymentMethod
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {!paymentMethodId && (
-        <div className="p-4 border border-gray-200 rounded-xl bg-gray-50">
+        <div className="p-4 rounded-xl" style={{backgroundColor: '#FFFFFF', border: '1.5px solid #E0E0E0'}}>
           <CardElement options={{
             style: {
               base: {
                 fontSize: '16px',
-                color: '#111827',
+                color: '#1A1A1A',
+                backgroundColor: '#FFFFFF',
                 '::placeholder': {
-                  color: '#9CA3AF',
+                  color: '#AAAAAA',
                 },
               },
               invalid: {
-                color: '#EF4444',
+                color: '#DC2626',
               },
             },
           }} />
@@ -83,7 +84,7 @@ const CheckoutForm = ({ clientSecret, amount, onSuccess, onCancel, paymentMethod
         <button
           type="submit"
           disabled={!stripe || processing}
-          className="w-full bg-black text-white py-4 rounded-xl font-bold flex items-center justify-center space-x-2 hover:bg-gray-800 transition-all disabled:opacity-50"
+          className="w-full rounded-[2rem] bg-gradient-to-r from-purple-500 to-indigo-500 py-4 text-sm font-black text-white shadow-xl shadow-purple-500/20 flex items-center justify-center space-x-2 transition-all hover:from-purple-400 hover:to-indigo-400 active:scale-[0.98] disabled:opacity-50"
         >
           {processing ? (
             <>

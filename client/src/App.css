@@ -4,124 +4,71 @@
 
 @layer base {
   body {
-    @apply bg-[#3b0b6b] text-slate-200;
-    background-image:
-      radial-gradient(circle at top left, rgba(167, 139, 250, 0.35), transparent 30%),
-      radial-gradient(circle at top right, rgba(124, 58, 237, 0.28), transparent 28%),
-      linear-gradient(180deg, #3b0b6b 0%, #140731 100%);
+    @apply bg-white text-black dark:bg-black dark:text-white;
+    background-image: none;
+    background-attachment: initial;
+  }
+
+  html.dark body {
+    background-image: linear-gradient(180deg, #000000 0%, #1a1130 100%);
     background-attachment: fixed;
   }
 }
 
 @layer components {
   .app-shell {
-    @apply min-h-screen bg-[#3b0b6b] text-slate-200;
-    background-image:
-      radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 30%),
-      radial-gradient(circle at top right, rgba(167, 139, 250, 0.10), transparent 24%);
+    @apply min-h-screen bg-white text-black dark:bg-transparent dark:text-white;
   }
 
   .neon-header {
-    @apply sticky top-0 z-30 border-b border-white/10 bg-white/5 backdrop-blur-md;
+    @apply sticky top-0 z-30 border-b border-[#e5e5e5] bg-white/95 backdrop-blur-md shadow-sm dark:border-white/10 dark:bg-black/35;
   }
 
   .neon-panel {
-    @apply rounded-[2rem] border border-white/10 bg-white/5 text-slate-200 shadow-lg shadow-purple-500/10 backdrop-blur-lg;
+    @apply rounded-[2rem] border border-[#e5e5e5] bg-white text-black shadow-sm dark:border-white/10 dark:bg-[#111827]/70 dark:text-white dark:backdrop-blur-lg dark:shadow-level-1;
   }
 
   .neon-panel-strong {
-    @apply rounded-[2rem] border border-purple-500/20 bg-gradient-to-br from-purple-500/20 via-white/5 to-indigo-500/10 text-slate-100 shadow-2xl shadow-purple-500/20 backdrop-blur-lg;
+    @apply rounded-[2rem] border border-purple-600/30 bg-white text-black shadow-md dark:border-purple-500/20 dark:bg-gradient-to-br dark:from-purple-500/20 dark:via-white/5 dark:to-indigo-500/10 dark:text-white dark:shadow-2xl dark:shadow-purple-500/20 dark:backdrop-blur-lg;
   }
 
   .neon-subpanel {
-    @apply rounded-2xl border border-white/10 bg-white/[0.04] text-slate-200;
+    @apply rounded-2xl border border-[#e5e5e5] bg-white text-black dark:border-white/10 dark:bg-[#1f2937] dark:text-white;
   }
 
   .neon-label {
-    @apply text-[10px] font-black uppercase tracking-[0.2em] text-slate-400;
+    @apply text-[10px] font-black uppercase tracking-[0.2em] text-black dark:text-gray-400;
   }
 
   .neon-title {
-    @apply text-slate-100;
+    @apply text-black dark:text-white;
   }
 
   .neon-muted {
-    @apply text-slate-400;
+    @apply text-black dark:text-gray-400;
   }
 
   .neon-input {
-    @apply w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all;
+    @apply w-full rounded-2xl border border-[#e5e5e5] bg-white px-5 py-4 text-black placeholder:text-black focus:outline-none focus:ring-2 focus:ring-purple-600/30 focus:border-purple-600 transition-all dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-400;
   }
 
   .neon-btn {
-    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-purple-500/20 transition-all duration-300 hover:scale-[1.02] hover:from-purple-400 hover:to-indigo-400 active:scale-[0.98];
+    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-purple-500/20 transition-all duration-300 hover:scale-[1.02] hover:from-purple-500 hover:to-purple-600 active:scale-[0.98];
   }
 
   .neon-btn-secondary {
-    @apply inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-200 transition-all duration-300 hover:border-purple-400/40 hover:bg-purple-500/10 hover:text-purple-200 active:scale-[0.98];
+    @apply inline-flex items-center justify-center rounded-2xl border border-[#e5e5e5] bg-white px-6 py-3 text-xs font-black uppercase tracking-widest text-black transition-all duration-300 hover:border-purple-600/40 hover:bg-purple-600/5 active:scale-[0.98] dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:border-purple-400/40 dark:hover:bg-purple-500/10;
   }
 
   .neon-table {
-    @apply overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl shadow-purple-500/10 backdrop-blur-lg;
+    @apply overflow-hidden rounded-[2rem] border border-[#e5e5e5] bg-white shadow-sm dark:border-white/10 dark:bg-white/5 dark:shadow-2xl dark:shadow-purple-500/10 dark:backdrop-blur-lg;
   }
 
   .neon-table thead {
-    @apply bg-white/10;
+    @apply bg-white dark:bg-white/10;
   }
 
   .neon-table tbody tr {
-    @apply border-t border-white/5 transition-colors duration-300 hover:bg-purple-500/10;
-  }
-}
-
-@layer utilities {
-  .bg-white {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-  }
-
-  .bg-white\/80,
-  .bg-white\/85 {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-  }
-
-  .bg-soft-white,
-  .bg-soft-white\/50 {
-    background-color: rgba(255, 255, 255, 0.04) !important;
-  }
-
-  .bg-gray-50,
-  .bg-gray-100 {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-  }
-
-  .bg-navy\/5,
-  .bg-navy\/10 {
-    background-color: rgba(255, 255, 255, 0.06) !important;
-  }
-
-  .text-navy,
-  .text-soft-white,
-  .text-gray-900 {
-    color: #e2e8f0 !important;
-  }
-
-  .text-navy\/40,
-  .text-navy\/30,
-  .text-navy\/20,
-  .text-navy\/60,
-  .text-soft-white\/40,
-  .text-soft-white\/60,
-  .text-gray-600,
-  .text-gray-500,
-  .text-gray-400 {
-    color: #94a3b8 !important;
-  }
-
-  .border-navy\/5,
-  .border-navy\/10,
-  .border-gray-100,
-  .border-gray-200,
-  .border-white\/20 {
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    @apply border-t border-[#e5e5e5] transition-colors duration-300 hover:bg-purple-600/5 dark:border-white/5 dark:hover:bg-purple-500/10;
   }
 }

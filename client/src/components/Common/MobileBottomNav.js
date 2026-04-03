@@ -103,14 +103,8 @@ const MobileBottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
-      style={{
-        background: 'rgba(10,10,15,0.95)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
-      }}
+      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/95 text-black border-t border-[#e5e5e5] shadow-[0_-10px_30px_rgba(0,0,0,0.06)] backdrop-blur dark:bg-black/45 dark:text-white dark:border-white/10"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex items-stretch justify-around h-16">
         {links.map((link) => (
@@ -122,9 +116,9 @@ const MobileBottomNav = () => {
               `flex flex-col items-center justify-center flex-1 gap-0.5 text-[10px] font-bold uppercase tracking-wider transition-colors duration-150 px-1
               ${isActive
                 ? link.accent
-                  ? 'text-purple-400'
-                  : 'text-purple-300'
-                : 'text-white/30'
+                  ? 'text-black dark:text-purple-200'
+                  : 'text-black dark:text-purple-200'
+                : 'text-black/70 dark:text-white/60'
               }`
             }
           >

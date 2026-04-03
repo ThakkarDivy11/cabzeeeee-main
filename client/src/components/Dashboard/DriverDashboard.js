@@ -46,6 +46,11 @@ const Sparkline = ({ data = [], color = '#0074D9', width = 100, height = 32 }) =
 /* ── KPI Card with optional sparkline ── */
 const KPICard = ({ label, value, sub, icon, accent = false, sparkData, sparkColor, delay = 0 }) => {
   const ref = useScrollReveal();
+
+  const cardBg = accent
+    ? 'bg-white border-[#e5e5e5] shadow-sm dark:bg-gradient-to-br dark:from-purple-600/25 dark:to-indigo-600/10 dark:border-purple-500/30 dark:shadow-level-2'
+    : 'bg-white border-[#e5e5e5] shadow-sm dark:bg-[#111827]/70 dark:backdrop-blur dark:border-white/10 dark:shadow-level-1';
+
   return (
     <div
       ref={ref}
@@ -53,26 +58,28 @@ const KPICard = ({ label, value, sub, icon, accent = false, sparkData, sparkColo
       className={`
         rounded-2xl sm:rounded-3xl p-4 sm:p-6 border relative overflow-hidden
         transition-all duration-200 hover:shadow-glow hover:-translate-y-0.5
-        ${accent ? 'bg-gradient-to-br from-purple-600/20 to-indigo-600/10 border-purple-500/30' : 'bg-white/5 backdrop-blur-sm border-white/10'}
+        ${cardBg}
       `}
       style={{ '--reveal-delay': `${delay}ms` }}
     >
-      <div className={`absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 rounded-full opacity-10 ${accent ? 'bg-purple-400' : 'bg-purple-600'}`} />
-      <p className="text-[10px] font-bold uppercase tracking-widest mb-2 text-slate-500">{label}</p>
-      <div className="flex items-end justify-between gap-3">
-        <div className="flex-1">
-          <p className="text-3xl font-bold tracking-tight leading-none text-slate-100">{value}</p>
-          {sub && <p className="text-[10px] font-semibold uppercase tracking-wider mt-2 text-slate-600">{sub}</p>}
-          {sparkData && (
-            <div className="mt-3">
-              <Sparkline data={sparkData} color={sparkColor || (accent ? '#A78BFA' : '#7C3AED')} width={90} height={28} />
-            </div>
-          )}
-        </div>
-        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ${accent ? 'bg-purple-500/20' : 'bg-white/10'}`}>
-          <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {icon}
-          </svg>
+      <div className="relative">
+        <div className={`absolute -top-6 -right-6 w-16 h-16 sm:w-20 sm:h-20 rounded-full opacity-10 ${accent ? 'bg-purple-400' : 'bg-purple-600'}`} />
+        <p className="text-[10px] font-bold uppercase tracking-widest mb-2 text-black dark:text-gray-400">{label}</p>
+        <div className="flex items-end justify-between gap-3">
+          <div className="flex-1">
+            <p className="text-3xl font-bold tracking-tight leading-none text-black dark:text-white">{value}</p>
+            {sub && <p className="text-[10px] font-semibold uppercase tracking-wider mt-2 text-black dark:text-gray-400">{sub}</p>}
+            {sparkData && (
+              <div className="mt-3">
+                <Sparkline data={sparkData} color={sparkColor || (accent ? '#A78BFA' : '#7C3AED')} width={90} height={28} />
+              </div>
+            )}
+          </div>
+          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 border border-black/5 dark:border-white/10 ${accent ? 'bg-purple-500/15 dark:bg-purple-500/20' : 'bg-black/5 dark:bg-white/10'}`}>
+            <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {icon}
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -86,29 +93,32 @@ const AvailabilityToggle = ({ status, onToggle }) => {
     <div className={`
       flex items-center justify-between p-5 rounded-2xl border
       transition-all duration-300
-      ${isOnline ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-white/5 border-white/10'}
+      ${isOnline
+        ? 'bg-white border-[#e5e5e5] shadow-sm dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:shadow-level-1'
+        : 'bg-white border-[#e5e5e5] shadow-sm dark:bg-white/5 dark:border-white/10 dark:shadow-level-1'
+      }
     `}>
       <div className="flex items-center gap-3">
-        <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${isOnline ? 'bg-emerald-500 text-white' : 'bg-white/10 text-slate-500'}`}>
+        <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${isOnline ? 'bg-emerald-500 text-white' : 'bg-black/5 text-black dark:bg-white/10 dark:text-gray-400'}`}>
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          {isOnline && <div className="live-dot absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-[#020617]" />}
+          {isOnline && <div className="live-dot absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white dark:border-[#020617]" />}
         </div>
         <div>
-          <p className={`font-semibold text-sm leading-tight ${isOnline ? 'text-emerald-400' : 'text-slate-500'}`}>
+          <p className={`font-semibold text-sm leading-tight ${isOnline ? 'text-black dark:text-emerald-400' : 'text-black dark:text-gray-400'}`}>
             {isOnline ? 'You\'re Online' : 'You\'re Offline'}
           </p>
-          <p className="text-xs text-slate-600 leading-tight">{isOnline ? 'Accepting new rides' : 'Not visible to riders'}</p>
+          <p className="text-xs text-black dark:text-gray-400 leading-tight">{isOnline ? 'Accepting new rides' : 'Not visible to riders'}</p>
         </div>
       </div>
       <button
         onClick={onToggle}
         className={`
           relative inline-flex h-8 w-14 flex-shrink-0 items-center rounded-full
-          focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-[#020617]
+          focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-[#020617]
           transition-all duration-300
-          ${isOnline ? 'bg-emerald-500 focus:ring-emerald-500/30' : 'bg-white/15 focus:ring-white/20'}
+          ${isOnline ? 'bg-emerald-500 focus:ring-emerald-500/30' : 'bg-black/15 focus:ring-black/10 dark:bg-white/15 dark:focus:ring-white/20'}
         `}
         style={{ transition: 'background-color 0.3s cubic-bezier(0.4,0,0.2,1)' }}
         aria-checked={isOnline}
@@ -369,7 +379,7 @@ const DriverDashboard = () => {
 
       {/* Active Mission Prompt — high priority if the driver has an ongoing ride */}
       {activeRide && (
-        <div className="bg-gradient-to-r from-purple-900/40 to-indigo-900/40 rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col md:flex-row items-center gap-4 sm:gap-6 shadow-2xl relative overflow-hidden group border border-purple-500/30">
+        <div className="bg-white border border-[#e5e5e5] shadow-sm rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col md:flex-row items-center gap-4 sm:gap-6 relative overflow-hidden group dark:bg-gradient-to-r dark:from-purple-900/40 dark:to-indigo-900/40 dark:shadow-2xl dark:border-purple-500/30">
           <div className="absolute top-0 right-0 w-48 h-48 sm:w-64 sm:h-64 bg-purple-500/[0.05] rounded-full -mr-24 -mt-24 sm:-mr-32 sm:-mt-32 transition-transform duration-700 group-hover:scale-110"></div>
           
           <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center flex-shrink-0 relative z-10 border border-purple-500/30">
@@ -380,8 +390,8 @@ const DriverDashboard = () => {
           
           <div className="flex-1 text-center md:text-left relative z-10">
             <p className="font-black text-[10px] text-purple-400 uppercase tracking-[0.3em] mb-1">Mission Live</p>
-            <h3 className="font-bold text-xl text-slate-100 mb-1">You have an ongoing deployment</h3>
-            <p className="text-sm text-slate-400">Client: {activeRide.rider?.name || 'Authenticated Client'} • Fare: ₹{activeRide.fare}</p>
+            <h3 className="font-bold text-xl text-black dark:text-white mb-1">You have an ongoing deployment</h3>
+            <p className="text-sm text-black dark:text-gray-400">Client: {activeRide.rider?.name || 'Authenticated Client'} • Fare: ₹{activeRide.fare}</p>
           </div>
           
           <button
