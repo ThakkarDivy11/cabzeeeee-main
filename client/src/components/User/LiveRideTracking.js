@@ -413,12 +413,16 @@ const LiveRideTracking = () => {
                         <p className="text-[10px] text-sky-blue font-black uppercase tracking-widest mb-3">Your Security OTP</p>
                         <div className="flex justify-center gap-2">
                             {ride.pickupOTP.split('').map((digit, i) => (
-                                <span key={i} className="w-10 h-12 flex items-center justify-center bg-white/10 rounded-xl text-2xl font-black border border-white/20">
+                                <span
+                                  key={i}
+                                  className="w-10 h-12 flex items-center justify-center rounded-xl text-2xl font-black"
+                                  style={{ backgroundColor: '#FFFFFF', color: '#000000', border: '1.5px solid #E0E0E0', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+                                >
                                     {digit}
                                 </span>
                             ))}
                         </div>
-                        <p className="text-[10px] text-white/40 mt-3 font-bold">Show this to your driver to start the ride</p>
+                        <p className="text-[10px] mt-3 font-bold" style={{ color: '#CCCCCC' }}>Show this to your driver to start the ride</p>
                     </div>
                 )}
 
@@ -461,7 +465,7 @@ const LiveRideTracking = () => {
                                     <span className="text-yellow-400 mr-1 text-[10px]">★</span>
                                     <span className="text-[10px] font-bold">{ride.driver.rating || '5.0'}</span>
                                 </div>
-                                <span className="text-[10px] font-black text-sky-blue">₹{ride.fare}</span>
+                                <span className="font-black text-sky-blue" style={{ fontSize: '20px' }}>₹{ride.fare}</span>
                             </div>
                         </div>
                     </div>

@@ -52,7 +52,7 @@ router.post('/confirm-ride-payment/:rideId', protect, express.json(), async (req
   try {
     const { rideId } = req.params;
     const { method, paymentIntentId } = req.body; // method: 'wallet' or 'card'
-
+    console.log("Hey")
     const ride = await Ride.findById(rideId);
     if (!ride) return res.status(404).json({ success: false, message: 'Ride not found' });
     if (ride.isPaid) return res.status(400).json({ success: false, message: 'Ride is already paid' });
@@ -181,17 +181,17 @@ router.post('/confirm-wallet-topup', protect, express.json(), async (req, res) =
   try {
     assertStripeConfigured();
     const { paymentIntentId } = req.body;
-    
+
     if (!paymentIntentId) {
       return res.status(400).json({ success: false, message: 'Payment Intent ID is required' });
     }
 
     const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    
+
     if (intent.status !== 'succeeded') {
       return res.status(400).json({ success: false, message: 'Payment not successful' });
     }
-    
+
     if (intent.metadata.type !== 'wallet_topup' || intent.metadata.userId !== req.user._id.toString()) {
       return res.status(400).json({ success: false, message: 'Invalid payment intent metadata' });
     }
