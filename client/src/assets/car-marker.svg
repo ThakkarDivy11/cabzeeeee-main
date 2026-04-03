@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Simple top-down car icon for map marker -->
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Outer halo -->
+    <circle cx="32" cy="32" r="22" fill="#ffffff" opacity="0.92"/>
+
+    <!-- Car body -->
+    <rect x="22" y="16" width="20" height="32" rx="8" fill="#111827"/>
+    <rect x="25" y="20" width="14" height="10" rx="4" fill="#0ea5e9" opacity="0.95"/>
+    <rect x="25" y="34" width="14" height="10" rx="4" fill="#0ea5e9" opacity="0.35"/>
+
+    <!-- Wheels -->
+    <rect x="18" y="22" width="6" height="10" rx="3" fill="#111827"/>
+    <rect x="40" y="22" width="6" height="10" rx="3" fill="#111827"/>
+    <rect x="18" y="32" width="6" height="10" rx="3" fill="#111827"/>
+    <rect x="40" y="32" width="6" height="10" rx="3" fill="#111827"/>
+  </g>
+</svg>
+

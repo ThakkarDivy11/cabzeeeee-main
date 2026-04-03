@@ -1,0 +1,8 @@
+# Environment variables - DO NOT commit this file
+node_modules/
+.env
+.env.*
+public/uploads/*
+!public/uploads/.gitkeep
+*.log
+.vercel

@@ -1,0 +1,520 @@
+/* ============================================================
+   CABZEE DESIGN SYSTEM — index.css
+   Design Rulebook v2.0 — "Noir Velocity" Edition
+   ============================================================ */
+
+/* ── 0. WEB FONTS ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── 1. CSS CUSTOM PROPERTIES (Design Tokens) ─────────────── */
+:root {
+  /* Dark Purple Neon — Main palette */
+  --color-bg: #020617;
+  --color-bg-elevated: #0a0a1a;
+  --color-surface: rgba(255,255,255,0.04);
+  --color-surface-elevated: rgba(255,255,255,0.07);
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+
+  /* Text hierarchy */
+  --color-text: #E2E8F0;
+  --color-text-muted: #94A3B8;
+  --color-text-subtle: rgba(148, 163, 184, 0.55);
+
+  /* Purple accent scale */
+  --color-purple: #7C3AED;
+  --color-purple-light: #A78BFA;
+  --color-purple-hover: #6d28d9;
+  --color-purple-glow: rgba(124, 58, 237, 0.3);
+  --color-purple-ring: rgba(124, 58, 237, 0.4);
+  --color-purple-bg: rgba(124, 58, 237, 0.12);
+
+  /* Legacy amber alias — keep for compat */
+  --color-amber: #A78BFA;
+  --color-amber-hover: #7C3AED;
+  --color-amber-light: rgba(124, 58, 237, 0.12);
+  --color-amber-ring: rgba(124, 58, 237, 0.20);
+  --color-amber-glow: 0 0 24px rgba(124, 58, 237, 0.25);
+  --color-accent: #7C3AED;
+  --color-accent-hover: #6d28d9;
+  --color-accent-light: rgba(124, 58, 237, 0.12);
+  --color-accent-ring: rgba(124, 58, 237, 0.20);
+
+  /* Semantic colors */
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.12);
+  --color-error: #EF4444;
+  --color-error-bg: rgba(239, 68, 68, 0.12);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+
+  /* Shadows */
+  --shadow-1: 0 1px 3px rgba(0,0,0,0.4), 0 2px 8px rgba(124,58,237,0.06);
+  --shadow-2: 0 4px 16px rgba(0,0,0,0.5), 0 0 20px rgba(124,58,237,0.08);
+  --shadow-3: 0 24px 64px rgba(0,0,0,0.6);
+  --shadow-amber: 0 8px 32px rgba(124,58,237,0.20);
+  --shadow-purple: 0 0 40px rgba(124,58,237,0.25);
+
+  /* Border radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
+  --radius-pill: 9999px;
+
+  /* 8pt spacing scale */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+
+  /* Easing functions */
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-in: cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1.0);
+}
+
+/* ── 2. GLOBAL RESET & BASE ───────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'DM Mono', 'Fira Mono', 'Courier New', monospace;
+}
+
+/* Syne for display headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Syne', 'Inter', sans-serif;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+/* ── 3. ANIMATION KEYFRAMES ───────────────────────────────── */
+
+/* Shimmer sweep — loading skeletons */
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* Toast enter — slide up from below + scale */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Toast exit — slide up and fade */
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+}
+
+/* Scroll-reveal — cards entering viewport */
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Multi-step form — step slide in from right */
+@keyframes stepIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Multi-step form — step slide out to left */
+@keyframes stepOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+/* Spring pop — tooltips, badges, success states */
+@keyframes springPop {
+  0%   { opacity: 0; transform: scale(0.7) translateY(4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Fade in — auth layout entrance */
+@keyframes fadeIn {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Pulse ring for live status indicators */
+@keyframes pulseRing {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Progress bar fill */
+@keyframes progressFill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* ── Noir Velocity keyframes ── */
+
+/* Amber glow pulse on accent elements */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(245, 166, 35, 0.15); }
+  50%      { box-shadow: 0 0 32px rgba(245, 166, 35, 0.30); }
+}
+
+/* Diagonal intro band slide */
+@keyframes bandSlide {
+  from {
+    transform: translateX(-100%) skewX(-15deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) skewX(-15deg);
+    opacity: 1;
+  }
+}
+
+/* Counter-up odometer reveal */
+@keyframes counterUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Subtle float for hero elements */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Stagger reveal for cards */
+@keyframes staggerReveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── 4. SKELETON / SHIMMER LOADING (dark mode) ───────────── */
+.skeleton {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── 5. SCROLL REVEAL ─────────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.45s var(--ease-out) var(--reveal-delay, 0ms),
+    transform 0.45s var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── 6. BUTTON MICRO-INTERACTIONS ────────────────────────────*/
+.btn-base {
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.btn-base:active {
+  transform: scale(0.97);
+  transition-duration: 0.08s;
+}
+
+/* ── 7. CARD HOVER LIFT ───────────────────────────────────── */
+.card-hover {
+  transition:
+    box-shadow 0.2s var(--ease-out),
+    transform 0.2s var(--ease-out),
+    border-color 0.2s ease;
+}
+
+.card-hover:hover {
+  box-shadow: var(--shadow-2);
+  transform: translateY(-2px);
+}
+
+/* ── 8. SIDEBAR EXPAND/COLLAPSE ──────────────────────────── */
+.sidebar {
+  transition: width 0.22s var(--ease-in-out);
+  overflow: hidden;
+}
+
+.sidebar-label {
+  opacity: 1;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .sidebar-label {
+  opacity: 0;
+}
+
+.collapse-toggle {
+  transition: transform 0.22s var(--ease-in-out);
+}
+
+.sidebar.collapsed .collapse-toggle {
+  transform: rotate(180deg);
+}
+
+/* ── 9. FORM STATES ──────────────────────────────────────── */
+.input-base {
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.input-base:focus {
+  outline: none;
+  border-color: var(--color-amber);
+  box-shadow: 0 0 0 3px var(--color-amber-ring);
+}
+
+.input-error {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* ── 10. STEP TRANSITIONS ────────────────────────────────── */
+.step-content {
+  animation: stepIn 0.35s var(--ease-out) forwards;
+}
+
+.step-content.exiting {
+  animation: stepOut 0.2s var(--ease-in) forwards;
+}
+
+/* ── 11. STATUS BADGE ANIMATIONS ────────────────────────── */
+.live-dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live-dot::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  animation: pulseRing 1.5s ease-out infinite;
+}
+
+/* ── 12. PROGRESS BAR ────────────────────────────────────── */
+.progress-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-amber);
+  border-radius: var(--radius-pill);
+  transition: width 0.4s var(--ease-in-out);
+}
+
+.progress-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.10);
+  transition:
+    background 0.3s ease,
+    transform 0.3s var(--ease-spring);
+}
+
+.progress-step-dot.completed {
+  background: var(--color-amber);
+  transform: scale(1.15);
+}
+
+.progress-step-dot.active {
+  background: var(--color-amber);
+  box-shadow: 0 0 0 3px var(--color-amber-ring);
+}
+
+/* ── 13. TOAST ANIMATIONS (override react-hot-toast) ──────── */
+[data-hot-toast] {
+  animation: toastIn 0.35s var(--ease-out) forwards !important;
+}
+
+/* ── 14. NOIR VELOCITY — Glass morphism cards ────────────── */
+.noir-card {
+  background: rgba(22, 22, 31, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.noir-card:hover {
+  box-shadow: var(--shadow-2);
+  border-color: rgba(255, 255, 255, 0.10);
+  transform: translateY(-2px);
+}
+
+.noir-card-amber {
+  background: rgba(22, 22, 31, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 166, 35, 0.15);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-1);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+/* ── 15. ANIMATED NUMBER REVEAL ─────────────────────────── */
+.counter-value {
+  animation: counterUp 0.6s var(--ease-out) forwards;
+  animation-delay: var(--counter-delay, 0ms);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── 16. PREFERS-REDUCED-MOTION OVERRIDE ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .skeleton::after {
+    animation: none;
+  }
+
+  .live-dot::before {
+    animation: none;
+  }
+
+  .noir-card-amber {
+    animation: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── 17. SCROLLBAR STYLING (dark-mode) ────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.20);
+}
+
+/* ── 18. UTILITY — Stagger children animation ────────────── */
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 320ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 400ms; }
+
+.stagger-children > * {
+  animation: staggerReveal 0.5s var(--ease-out) both;
+}
