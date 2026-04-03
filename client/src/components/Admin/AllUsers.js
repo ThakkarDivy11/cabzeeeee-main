@@ -112,7 +112,11 @@ const AllUsers = () => {
                                             <div className="flex items-center gap-6">
                                                 <div className="w-16 h-16 rounded-[1.25rem] overflow-hidden shadow-2xl border-4 border-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                                                     {user.profilePicture ? (
-                                                        <img className="h-full w-full object-cover" src={user.profilePicture} alt="" />
+                                                        <img
+                                                            className="h-full w-full object-cover"
+                                                            src={user.profilePicture.startsWith('http') ? user.profilePicture : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${user.profilePicture}`}
+                                                            alt=""
+                                                        />
                                                     ) : (
                                                         <div className="h-full w-full bg-navy flex items-center justify-center">
                                                             <span className="text-soft-white text-xl font-black italic">{user.name.charAt(0).toUpperCase()}</span>
