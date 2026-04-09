@@ -3,247 +3,216 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const EditDriverProfile = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    profilePicture: ''
-  });
-  const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
-  const [preview, setPreview] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        profilePicture: ''
+    });
+    const [loading, setLoading] = useState(true);
+    const [updating, setUpdating] = useState(false);
+    const [preview, setPreview] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          navigate('/login');
-          return;
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
+
+                const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    if (data.data.role !== 'driver') {
+                        navigate('/login');
+                        return;
+                    }
+                    setFormData({
+                        name: data.data.name,
+                        phone: data.data.phone,
+                        profilePicture: data.data.profilePicture || ''
+                    });
+                    if (data.data.profilePicture) {
+                        setPreview(data.data.profilePicture);
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                toast.error('Failed to fetch user data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [navigate]);
+
+    const handleChange = (e) => {
+        if (e.target.name === 'profilePicture') {
+            const file = e.target.files[0];
+            if (file) {
+                setSelectedFile(file);
+                const reader = new FileReader();
+                reader.onloadend = () => setPreview(reader.result);
+                reader.readAsDataURL(file);
+            }
+        } else {
+            setFormData({
+                ...formData,
+                [e.target.name]: e.target.value
+            });
         }
-
-        const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        const data = await response.json();
-        if (data.success) {
-          if (data.data.role !== 'driver') {
-            navigate('/login');
-            return;
-          }
-          setFormData({
-            name: data.data.name,
-            phone: data.data.phone,
-            profilePicture: data.data.profilePicture || ''
-          });
-          if (data.data.profilePicture) {
-            setPreview(data.data.profilePicture);
-          }
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        toast.error('Failed to fetch user data');
-      } finally {
-        setLoading(false);
-      }
     };
 
-    fetchProfile();
-  }, [navigate]);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setUpdating(true);
 
-  const handleChange = (e) => {
-    if (e.target.name === 'profilePicture') {
-      const file = e.target.files[0];
-      if (file) {
-        setSelectedFile(file);
-        const reader = new FileReader();
-        reader.onloadend = () => setPreview(reader.result);
-        reader.readAsDataURL(file);
-      }
-    } else {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value
-      });
-    }
-  };
+        try {
+            const token = localStorage.getItem('token');
+            const uploadData = new FormData();
+            uploadData.append('name', formData.name);
+            uploadData.append('phone', formData.phone);
+            if (selectedFile) {
+                uploadData.append('profilePicture', selectedFile);
+            }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setUpdating(true);
+            const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: uploadData
+            });
 
-    try {
-      const token = localStorage.getItem('token');
-      const uploadData = new FormData();
-      uploadData.append('name', formData.name);
-      uploadData.append('phone', formData.phone);
-      if (selectedFile) {
-        uploadData.append('profilePicture', selectedFile);
-      }
+            const data = await response.json();
+            if (data.success) {
+                toast.success('Profile updated');
+                localStorage.setItem('user', JSON.stringify(data.data));
+                navigate('/driver-profile');
+            } else {
+                toast.error(data.message || 'Update failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error('Network error');
+        } finally {
+            setUpdating(false);
+        }
+    };
 
-      const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: uploadData
-      });
+    if (loading) return <div className="p-20 text-center font-bold text-gray-400 uppercase tracking-widest">Loading records...</div>;
 
-      const data = await response.json();
-      if (data.success) {
-        toast.success('Profile updated successfully!');
-        localStorage.setItem('user', JSON.stringify(data.data));
-        navigate('/driver-profile');
-      } else {
-        toast.error(data.message || 'Failed to update profile');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Network error');
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-  }
-
-  return (
-    <div className="min-h-screen bg-soft-white font-sans text-navy">
-      {/* Premium Header */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-navy/5 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center">
-              <button
-                onClick={() => navigate('/driver-profile')}
-                className="mr-6 p-3 rounded-xl bg-navy/5 text-navy hover:bg-navy hover:text-soft-white transition-all duration-300 transform active:scale-95"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div className="flex items-center group cursor-pointer" onClick={() => navigate('/driver')}>
-                <div className="w-10 h-10 bg-navy rounded-xl flex items-center justify-center mr-3 shadow-lg shadow-navy/20">
-                  <span className="text-soft-white font-black italic">C</span>
+    return (
+        <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 space-y-12">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex items-center gap-6">
+                    <button
+                        onClick={() => navigate('/driver-profile')}
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                    >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <div>
+                        <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Edit Profile</h2>
+                        <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#FFD000]">Manage identity & communication</p>
+                    </div>
                 </div>
-                <div>
-                  <h1 className="text-lg font-black tracking-tighter uppercase leading-none">Modify Registry</h1>
-                  <p className="text-[10px] font-bold text-sky-blue uppercase tracking-widest mt-0.5">Operative Update</p>
+            </header>
+
+            <main className="max-w-2xl">
+                <div className="rounded-[3.5rem] border border-gray-100 bg-white p-10 shadow-sm dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
+                    <div className="mb-12 border-b border-gray-50 pb-10 dark:border-white/5">
+                         <h3 className="text-xl font-bold text-gray-900 dark:text-white lowercase">Bio & Verification</h3>
+                         <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 leading-relaxed">Update your operational name and contact protocols for the network registry.</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-10">
+                        {/* Avatar */}
+                        <div className="flex flex-col items-center gap-6 py-6 rounded-[2rem] bg-gray-50/50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10">
+                            <div className="group relative h-24 w-24">
+                                <div className="h-full w-full overflow-hidden rounded-[1.5rem] border-4 border-white bg-black shadow-xl dark:border-neutral-800">
+                                    {preview ? (
+                                        <img 
+                                            src={preview.startsWith('data:') || preview.startsWith('http') ? preview : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${preview}`} 
+                                            alt="Profile" 
+                                            className="h-full w-full object-cover transition-opacity group-hover:opacity-50" 
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center text-2xl font-black italic text-[#FFD000]">
+                                            {formData.name?.charAt(0).toUpperCase() || 'D'}
+                                        </div>
+                                    )}
+                                </div>
+                                <label className="absolute -bottom-2 -right-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl bg-black text-white shadow-lg hover:scale-110 transition-all dark:bg-[#FFD000] dark:text-black">
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    </svg>
+                                    <input type="file" name="profilePicture" accept="image/*" className="hidden" onChange={handleChange} />
+                                </label>
+                            </div>
+                            <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Click icon to upload photo</p>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Full Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Phone Number</label>
+                                <div className="relative">
+                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">+91</span>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 pl-16 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4 pt-6">
+                            <button
+                                type="submit"
+                                disabled={updating}
+                                className="flex-1 rounded-2xl bg-black py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 dark:bg-[#FFD000] dark:text-black"
+                            >
+                                {updating ? 'Syncing...' : 'Save Profile Changes'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => navigate('/driver-profile')}
+                                className="rounded-2xl border border-gray-200 bg-white px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all dark:bg-white/5 dark:border-white/5"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
                 </div>
-              </div>
-            </div>
-          </div>
+            </main>
         </div>
-      </header>
-
-      <main className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow-2xl rounded-[3rem] overflow-hidden border border-navy/5 relative">
-          <div className="absolute top-0 left-0 w-full h-2 bg-sky-blue"></div>
-
-          <div className="px-10 py-12 border-b border-navy/5 bg-navy/[0.01]">
-            <h3 className="text-2xl font-black text-navy uppercase tracking-tighter mb-2">Registry Update</h3>
-            <p className="text-[10px] font-black text-navy/30 uppercase tracking-[0.2em] leading-relaxed">Update your operational credentials and identification protocols. Ensure all data is synchronized with your official documentation.</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="px-10 py-12 space-y-10">
-            {/* Avatar Uploader */}
-            <div className="flex flex-col items-center pb-10 border-b border-navy/5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-sky-blue/[0.02] rounded-full -mr-16 -mt-16"></div>
-              <div className="relative group cursor-pointer">
-                <div className="absolute inset-0 bg-sky-blue rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                <div className="w-32 h-32 rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl relative z-10 bg-navy flex items-center justify-center transform group-hover:scale-105 transition-transform duration-500">
-                  {preview ? (
-                    <img src={preview.startsWith('data:') || preview.startsWith('http') ? preview : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${preview}`} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-soft-white text-4xl font-black italic">{formData.name?.charAt(0).toUpperCase() || 'C'}</span>
-                  )}
-                </div>
-                <label className="absolute -bottom-2 -right-2 bg-navy text-white p-3 rounded-2xl shadow-xl z-20 border-4 border-white cursor-pointer hover:bg-sky-blue transition-colors group-hover:rotate-12">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <input type="file" name="profilePicture" accept="image/*" className="hidden" onChange={handleChange} />
-                </label>
-              </div>
-              <p className="mt-4 text-[10px] font-black text-navy/40 uppercase tracking-widest">Update Identification Phase</p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8">
-              <div className="group">
-                <label htmlFor="name" className="block text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] mb-3 ml-1">Official Operational Designation</label>
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="e.g. Victor Kholov"
-                  className="block w-full px-6 py-5 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold placeholder:text-navy/20 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300 group-hover:border-navy/20"
-                />
-              </div>
-
-              <div className="group">
-                <label htmlFor="phone" className="block text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] mb-3 ml-1">Mobile Communication Protocol</label>
-                <div className="relative">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-navy/30 font-bold">+91</span>
-                  <input
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    placeholder="123-456-7890"
-                    className="block w-full pl-16 pr-6 py-5 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold placeholder:text-navy/20 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300 group-hover:border-navy/20"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <button
-                type="submit"
-                disabled={updating}
-                className="flex-1 bg-navy text-soft-white py-5 px-8 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-sky-blue shadow-2xl shadow-navy/20 transition-all transform active:scale-[0.98] disabled:opacity-50 flex items-center justify-center group"
-              >
-                {updating ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Synchronizing...
-                  </span>
-                ) : (
-                  <>
-                    Commit Registry Changes
-                    <svg className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </>
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/driver-profile')}
-                className="sm:w-1/3 py-5 px-8 border border-navy/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-navy/40 hover:bg-navy/5 transition-all"
-              >
-                Abort Update
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
-    </div>
-  );
+    );
 };
 
 export default EditDriverProfile;

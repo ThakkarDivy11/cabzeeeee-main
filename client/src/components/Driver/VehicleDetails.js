@@ -3,273 +3,235 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const VehicleDetails = () => {
-  const [user, setUser] = useState(null);
-  const [formData, setFormData] = useState({
-    make: '',
-    model: '',
-    year: '',
-    color: '',
-    licensePlate: '',
-    vehicleType: 'car'
-  });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const navigate = useNavigate();
+    // eslint-disable-next-line no-unused-vars
+    const [user, setUser] = useState(null);
+    const [formData, setFormData] = useState({
+        make: '',
+        model: '',
+        year: '',
+        color: '',
+        licensePlate: '',
+        vehicleType: 'car'
+    });
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          navigate('/login');
-          return;
-        }
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
 
-        const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+                const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    if (data.data.role !== 'driver') {
+                        navigate('/login');
+                        return;
+                    }
+                    setUser(data.data);
+                    if (data.data.vehicleInfo) {
+                        setFormData({
+                            make: data.data.vehicleInfo.make || '',
+                            model: data.data.vehicleInfo.model || '',
+                            year: data.data.vehicleInfo.year || '',
+                            color: data.data.vehicleInfo.color || '',
+                            licensePlate: data.data.vehicleInfo.licensePlate || '',
+                            vehicleType: data.data.vehicleInfo.vehicleType || 'car'
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                toast.error('Failed to fetch vehicle data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [navigate]);
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
         });
-
-        const data = await response.json();
-        if (data.success) {
-          if (data.data.role !== 'driver') {
-            navigate('/login');
-            return;
-          }
-          setUser(data.data);
-          if (data.data.vehicleInfo) {
-            setFormData({
-              make: data.data.vehicleInfo.make || '',
-              model: data.data.vehicleInfo.model || '',
-              year: data.data.vehicleInfo.year || '',
-              color: data.data.vehicleInfo.color || '',
-              licensePlate: data.data.vehicleInfo.licensePlate || '',
-              vehicleType: data.data.vehicleInfo.vehicleType || 'car'
-            });
-          }
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        toast.error('Failed to fetch vehicle data');
-      } finally {
-        setLoading(false);
-      }
     };
 
-    fetchProfile();
-  }, [navigate]);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setSaving(true);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    vehicleInfo: {
+                        make: formData.make,
+                        model: formData.model,
+                        year: parseInt(formData.year) || undefined,
+                        color: formData.color,
+                        licensePlate: formData.licensePlate,
+                        vehicleType: formData.vehicleType
+                    }
+                })
+            });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSaving(true);
+            const data = await response.json();
+            if (data.success) {
+                toast.success('Vehicle updated');
+                localStorage.setItem('user', JSON.stringify(data.data));
+                navigate('/driver-profile');
+            } else {
+                toast.error(data.message || 'Update failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error('Network error');
+        } finally {
+            setSaving(false);
+        }
+    };
 
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/users/me', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          vehicleInfo: {
-            make: formData.make,
-            model: formData.model,
-            year: parseInt(formData.year) || undefined,
-            color: formData.color,
-            licensePlate: formData.licensePlate,
-            vehicleType: formData.vehicleType
-          }
-        })
-      });
+    if (loading) return <div className="p-20 text-center font-bold text-gray-500 uppercase tracking-widest">Accessing vehicle log...</div>;
 
-      const data = await response.json();
-      if (data.success) {
-        toast.success('Vehicle details updated successfully!');
-        localStorage.setItem('user', JSON.stringify(data.data));
-        navigate('/driver-profile');
-      } else {
-        toast.error(data.message || 'Failed to update vehicle details');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Network error');
-    } finally {
-      setSaving(false);
-    }
-  };
+    return (
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-12">
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex items-center gap-6">
+                    <button
+                        onClick={() => navigate('/driver-profile')}
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                    >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <div>
+                        <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Vehicle Details</h2>
+                        <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#FFD000]">Manage your active fleet asset</p>
+                    </div>
+                </div>
+            </header>
 
-  if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-  }
+            <main className="max-w-4xl">
+                 <div className="rounded-[4rem] border border-gray-100 bg-white shadow-sm dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl overflow-hidden">
+                    <div className="p-12 border-b border-gray-50 dark:border-white/5 bg-black dark:bg-[#FFD000]">
+                        <h3 className="text-4xl font-black text-[#FFD000] dark:text-black tracking-tighter uppercase italic">Specifications</h3>
+                        <p className="mt-2 text-xs font-bold text-gray-400 dark:text-black/50 uppercase tracking-widest">High-precision diagnostic data for network verification</p>
+                    </div>
 
-  return (
-    <div className="min-h-screen bg-soft-white font-sans text-navy">
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-navy/5 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center">
-              <button
-                onClick={() => navigate('/driver-profile')}
-                className="mr-6 p-2 rounded-xl bg-soft-white border border-navy/5 text-navy/40 hover:text-navy hover:shadow-md transition-all active:scale-95"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div>
-                <h1 className="text-xl font-black text-navy uppercase tracking-tighter">Vehicle Assets</h1>
-                <p className="text-[10px] font-bold text-sky-blue uppercase tracking-widest leading-none mt-1">Registry Management</p>
-              </div>
-            </div>
-          </div>
+                    <form onSubmit={handleSubmit} className="p-12 space-y-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Manufacturer</label>
+                                <input
+                                    type="text"
+                                    name="make"
+                                    value={formData.make}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Maruti Suzuki"
+                                    required
+                                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Model Name</label>
+                                <input
+                                    type="text"
+                                    name="model"
+                                    value={formData.model}
+                                    onChange={handleChange}
+                                    placeholder="e.g. Dzire 2024"
+                                    required
+                                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Registration Year</label>
+                                <input
+                                    type="number"
+                                    name="year"
+                                    value={formData.year}
+                                    onChange={handleChange}
+                                    placeholder="2024"
+                                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Vehicle Color</label>
+                                <input
+                                    type="text"
+                                    name="color"
+                                    value={formData.color}
+                                    onChange={handleChange}
+                                    placeholder="White"
+                                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Plate Number</label>
+                                <input
+                                    type="text"
+                                    name="licensePlate"
+                                    value={formData.licensePlate}
+                                    onChange={handleChange}
+                                    placeholder="MH-12-AB-1234"
+                                    required
+                                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white uppercase"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Type</label>
+                                <select
+                                    name="vehicleType"
+                                    value={formData.vehicleType}
+                                    onChange={handleChange}
+                                    className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 p-5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[#FFD000]/10 dark:bg-black/20 dark:border-white/5 dark:text-white"
+                                >
+                                    <option value="car">Car / Sedan</option>
+                                    <option value="bike">Bike / Express</option>
+                                    <option value="auto">Auto / Rickshaw</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4 pt-4 justify-end">
+                            <button
+                                type="button"
+                                onClick={() => navigate('/driver-profile')}
+                                className="rounded-2xl border border-gray-200 bg-white px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all dark:bg-white/5 dark:border-white/5"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={saving}
+                                className="rounded-2xl bg-black px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl hover:scale-105 active:scale-95 transition-all dark:bg-[#FFD000] dark:text-black"
+                            >
+                                {saving ? 'Updating...' : 'Save Vehicle Info'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
         </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 text-navy">
-        <div className="bg-white shadow-2xl rounded-[2.5rem] border border-navy/5 overflow-hidden">
-          <div className="px-10 py-10 bg-navy">
-            <h2 className="text-3xl font-black text-soft-white tracking-tight mb-2">Technical Specifications</h2>
-            <p className="text-soft-white/60 text-sm font-medium">Please provide accurate details for fleet verification.</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-10 space-y-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
-              <div className="space-y-2">
-                <label htmlFor="make" className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] ml-1">
-                  Manufacturer / Make
-                </label>
-                <input
-                  type="text"
-                  name="make"
-                  id="make"
-                  value={formData.make}
-                  onChange={handleChange}
-                  placeholder="e.g., Maruti Suzuki"
-                  required
-                  className="w-full px-5 py-4 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold placeholder:text-navy/20 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="model" className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] ml-1">
-                  Model Designation
-                </label>
-                <input
-                  type="text"
-                  name="model"
-                  id="model"
-                  value={formData.model}
-                  onChange={handleChange}
-                  placeholder="e.g., Dzire VXI"
-                  required
-                  className="w-full px-5 py-4 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold placeholder:text-navy/20 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="year" className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] ml-1">
-                  Model Year
-                </label>
-                <input
-                  type="number"
-                  name="year"
-                  id="year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  placeholder="e.g., 2024"
-                  min="2010"
-                  max={new Date().getFullYear() + 1}
-                  className="w-full px-5 py-4 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold placeholder:text-navy/20 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="color" className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] ml-1">
-                  Exterior Finish
-                </label>
-                <input
-                  type="text"
-                  name="color"
-                  id="color"
-                  value={formData.color}
-                  onChange={handleChange}
-                  placeholder="e.g., Arctic White"
-                  className="w-full px-5 py-4 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold placeholder:text-navy/20 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="licensePlate" className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] ml-1">
-                  Registration Number
-                </label>
-                <input
-                  type="text"
-                  name="licensePlate"
-                  id="licensePlate"
-                  value={formData.licensePlate}
-                  onChange={handleChange}
-                  placeholder="e.g., MH 12 AB 1234"
-                  required
-                  className="w-full px-5 py-4 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold placeholder:text-navy/20 focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300 uppercase"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="vehicleType" className="text-[10px] font-black text-navy/40 uppercase tracking-[0.2em] ml-1">
-                  Asset Category
-                </label>
-                <select
-                  name="vehicleType"
-                  id="vehicleType"
-                  value={formData.vehicleType}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-5 py-4 border border-navy/10 rounded-2xl bg-soft-white text-navy font-bold focus:outline-none focus:ring-4 focus:ring-navy/5 focus:border-navy transition-all duration-300 cursor-pointer appearance-none"
-                >
-                  <option value="car">Car (Premium Fleet)</option>
-                  <option value="bike">Bike (Express Courier)</option>
-                  <option value="auto">Auto (Urban Shuttle)</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="pt-8 flex flex-col sm:flex-row items-center justify-end gap-4">
-              <button
-                type="button"
-                onClick={() => navigate('/driver-profile')}
-                className="w-full sm:w-auto px-10 py-5 text-xs font-black uppercase tracking-widest text-navy bg-soft-white border border-navy/10 rounded-2xl hover:bg-navy/5 transition-all duration-300"
-              >
-                Dismiss
-              </button>
-              <button
-                type="submit"
-                disabled={saving}
-                className="w-full sm:w-auto px-10 py-5 text-xs font-black uppercase tracking-widest text-soft-white bg-navy rounded-2xl shadow-2xl shadow-navy/20 hover:bg-navy-dark transition-all duration-300 disabled:opacity-50 active:scale-95 flex items-center justify-center gap-3"
-              >
-                {saving ? (
-                  <>
-                    <div className="w-2 h-2 bg-soft-white rounded-full animate-pulse"></div>
-                    Syncing Data...
-                  </>
-                ) : (
-                  'Confirm & Register'
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
-    </div>
-  );
+    );
 };
 
 export default VehicleDetails;

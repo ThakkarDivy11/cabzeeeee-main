@@ -1,13 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+
 /* ============================================================
    CABZEE DESIGN SYSTEM — index.css
-   Design Rulebook v2.0 — "Noir Velocity" Edition
+   Design Rulebook v2.0 — "Noir Velocity" Premium
    ============================================================ */
-
-/* ── 0. WEB FONTS ─────────────────────────────────────────── */
-/* Global font per requirement: San Francisco stack (system). */
 
 /* ── 1. CSS CUSTOM PROPERTIES (Design Tokens) ─────────────── */
 :root {
+  /* Premium Palette */
+  --accent: #FFD000;
+  --accent2: #ff6b00;
+  --accent-rgb: 255,208,0;
+  --teal: #00d4a8;
+  --teal-dim: rgba(0,212,168,0.16);
+  --teal-border: rgba(0,212,168,0.22);
+  --green-dot: #00e87a;
+  
+  --bg: #06060a;
+  --text: #f0f0f0;
+  --text2: #a0a0be;
+  --muted: #4a4a66;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --glass-bg: rgba(13, 13, 24, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
   /* Dark Purple Neon — Main palette */
   --color-bg: #020617;
   --color-bg-elevated: #0a0a1a;
@@ -92,8 +108,17 @@ html:not(.dark) {
   --color-border-subtle: #e5e5e5;
 
   --color-text: #000000;
-  --color-text-muted: #000000;
-  --color-text-subtle: #000000;
+  --color-text-muted: #111111;
+  --color-text-subtle: #111111;
+
+  --bg: #f8f9fa;
+  --text: #000000;
+  --text2: #333333;
+  --muted: #666666;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.12);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.1);
 
   --shadow-1: 0 1px 2px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.06);
   --shadow-2: 0 10px 24px rgba(0,0,0,0.10);
@@ -134,7 +159,7 @@ input, button, select, textarea {
 }
 
 html.dark body {
-  background-image: linear-gradient(180deg, #000000 0%, #1a1130 100%);
+  background-color: #06060a;
 }
 
 /* LIGHT MODE STRICTNESS: no gray/white text utilities in light mode */
@@ -579,6 +604,23 @@ html:not(.dark) [class*="bg-[#020617]"] {
 .stagger-children > *:nth-child(5) { animation-delay: 320ms; }
 .stagger-children > *:nth-child(6) { animation-delay: 400ms; }
 
-.stagger-children > * {
-  animation: staggerReveal 0.5s var(--ease-out) both;
+/* Removed cz-noise and cz-orb for Clean Premium UI */
+
+.cz-grid {
+  background-image: 
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.4;
 }
+
+.cz-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+
+.cz-bebas { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; }
+.cz-dm { font-family: 'DM Sans', sans-serif; }

@@ -60,7 +60,6 @@ const LiveMapBooking = () => {
         setMapCenter(coords);
     }, [step]);
 
-    // Fetch address from coordinates
     const fetchAddress = useCallback(async (coords) => {
         setAddressFetching(true);
         try {
@@ -77,7 +76,6 @@ const LiveMapBooking = () => {
         }
     }, [applyLocation]);
 
-    // Fetch nearby drivers
     const fetchNearbyDrivers = useCallback(async (coords) => {
         try {
             const token = localStorage.getItem('token');
@@ -93,7 +91,6 @@ const LiveMapBooking = () => {
         }
     }, []);
 
-    // Initial load: get current location
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -111,8 +108,7 @@ const LiveMapBooking = () => {
                 }
             );
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [fetchAddress, fetchNearbyDrivers]);
 
     const handleMapMove = (newCenter) => {
         if (step !== 'confirm') {
@@ -129,19 +125,16 @@ const LiveMapBooking = () => {
         fetchNearbyDrivers(coords);
     };
 
-    // Keep the search box aligned to the current step
     useEffect(() => {
         if (step === 'pickup') setSearchQuery(pickup.address || '');
         if (step === 'drop') setSearchQuery(drop.address || '');
         if (step === 'confirm') setSearchQuery('');
         setSearchResults([]);
         setSearchLoading(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [step]);
+    }, [step, pickup.address, drop.address]);
 
     const debouncedQuery = useMemo(() => searchQuery.trim(), [searchQuery]);
 
-    // Address search (manual typing)
     useEffect(() => {
         if (step === 'confirm') return;
         if (debouncedQuery.length < 3) {
@@ -195,29 +188,16 @@ const LiveMapBooking = () => {
             return;
         }
         setStep('drop');
-        localStorage.setItem('pickupLocation', JSON.stringify({
-            address: pickup.address,
-            lat: pickup.coords[0],
-            lon: pickup.coords[1]
-        }));
     };
 
-    // Calculate distance in km
     const calculateDistance = (coord1, coord2) => {
-        const R = 6371; // Radius of the earth in km
-        const dLat = deg2rad(coord2[0] - coord1[0]);
-        const dLon = deg2rad(coord2[1] - coord1[1]);
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(coord1[0])) * Math.cos(deg2rad(coord2[0])) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const rad = (deg) => deg * (Math.PI / 180);
+        const R = 6371;
+        const dLat = rad(coord2[0] - coord1[0]);
+        const dLon = rad(coord2[1] - coord1[1]);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(rad(coord1[0])) * Math.cos(rad(coord2[0])) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const d = R * c; // Distance in km
-        return d;
-    };
-
-    const deg2rad = (deg) => {
-        return deg * (Math.PI / 180);
+        return R * c;
     };
 
     const handleConfirmDrop = () => {
@@ -226,20 +206,9 @@ const LiveMapBooking = () => {
             return;
         }
         setStep('confirm');
-        localStorage.setItem('dropLocation', JSON.stringify({
-            address: drop.address,
-            lat: drop.coords[0],
-            lon: drop.coords[1]
-        }));
-
-        // Calculate route positions
         setRoutePositions([pickup.coords, drop.coords]);
-
-        // Calculate fare based on distance
         const distance = calculateDistance(pickup.coords, drop.coords);
-        const baseFare = 50;
-        const ratePerKm = 12;
-        const estimatedFare = Math.round(baseFare + (distance * ratePerKm));
+        const estimatedFare = Math.round(50 + (distance * 12));
         setFareEstimate(estimatedFare);
     };
 
@@ -247,246 +216,216 @@ const LiveMapBooking = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const distance = calculateDistance(pickup.coords, drop.coords); // Recalculate for payload
+            const distance = calculateDistance(pickup.coords, drop.coords);
 
             const rideData = {
-                pickupLocation: {
-                    address: pickup.address,
-                    coordinates: [pickup.coords[1], pickup.coords[0]]
-                },
-                dropLocation: {
-                    address: drop.address,
-                    coordinates: [drop.coords[1], drop.coords[0]]
-                },
+                pickupLocation: { address: pickup.address, coordinates: [pickup.coords[1], pickup.coords[0]] },
+                dropLocation: { address: drop.address, coordinates: [drop.coords[1], drop.coords[0]] },
                 vehicleType: 'car',
                 paymentMethod: 'cash',
                 fare: fareEstimate,
                 distance: parseFloat(distance.toFixed(2)),
-                estimatedTime: Math.round(distance * 3) + 5 // Rough estimate: 3 mins per km + 5 mins base
+                estimatedTime: Math.round(distance * 3) + 5
             };
 
             const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/rides', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(rideData)
             });
 
             if (response.ok) {
                 const data = await response.json();
-                toast.success('Searching for nearby drivers...');
-                localStorage.removeItem('pickupLocation');
-                localStorage.removeItem('dropLocation');
-                localStorage.removeItem('rideRequest');
+                toast.success('Searching for drivers...');
                 navigate(`/live-ride/${data.data._id}`);
             } else {
-                const errorData = await response.json();
-                toast.error(errorData.message || 'Failed to request ride');
+                toast.error('Failed to request ride');
             }
-        } catch (error) {
-            console.error('Error requesting ride:', error);
-            toast.error('Network error');
-        } finally {
-            setLoading(false);
-        }
+        } catch (error) { toast.error('Network error'); }
+        finally { setLoading(false); }
     };
 
     return (
-        <div className="h-screen w-full overflow-hidden flex bg-[#020617]">
+        <div className="h-screen w-full overflow-hidden flex bg-[var(--bg)] cz-dm relative">
+            <div className="cz-noise" />
+
             <Sidebar
                 isOpen={sidebarOpen}
                 closeSidebar={() => setSidebarOpen(false)}
                 user={user}
             />
 
-            <div className="flex-1 flex flex-col relative lg:ml-[220px] h-screen w-full">
-                {/* Header */}
+            <div className="flex-1 flex flex-col relative lg:ml-[220px] h-screen w-full z-10">
+                {/* ── Dashboard Controller Head ── */}
                 <div className="absolute top-0 left-0 right-0 z-[1000] p-4 pointer-events-none">
-                    <div className="flex flex-col gap-2 max-w-md mx-auto">
-                        <div className="pointer-events-auto flex items-center justify-between rounded-2xl border border-purple-300/30 bg-[#0ea5e9] p-4 text-white shadow-2xl shadow-purple-500/25">
-                            <div className="flex items-center">
-                                <button onClick={() => navigate('/rider')} className="mr-2 p-2 text-purple-200/80 transition-colors hover:text-white">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                    <div className="flex flex-col gap-3 max-w-sm mx-auto sm:ml-0 pointer-events-auto">
+
+                        {/* Header Panel */}
+                        <div className="cz-glass rounded-2xl border border-[var(--border)] p-4 flex items-center justify-between shadow-2xl">
+                            <div className="flex items-center gap-3">
+                                <button onClick={() => navigate('/rider')} className="p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                                    <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
                                     </svg>
                                 </button>
-                                <h1 className="whitespace-nowrap text-lg font-bold text-white">Book your ride</h1>
+                                <h1 className="cz-bebas text-2xl tracking-widest text-[var(--text)] translate-y-[1px]">BOOK RIDE</h1>
                             </div>
-                            <button onClick={() => setSidebarOpen(true)} className="rounded-xl border border-purple-300/25 bg-white/10 p-2 text-purple-100 shadow-sm transition-all duration-300 active:scale-95 hover:bg-purple-400/20 hover:text-white lg:hidden">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
+                            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl bg-white/5 text-[var(--text)]">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
                             </button>
                         </div>
 
-                    <div className="pointer-events-auto space-y-4 rounded-2xl border border-purple-300/30 bg-[#0891b2] p-6 text-white shadow-2xl shadow-purple-500/30">
-                        {/* Manual input */}
-                        {step !== 'confirm' && (
-                            <div className="space-y-2">
-                                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-purple-100/60">
-                                    {step === 'pickup' ? 'Set pickup manually' : 'Set drop-off manually'}
-                                </p>
-                                <div className="relative">
-                                    <input
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder={`Type ${activeLabel.toLowerCase()} address`}
-                                        className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-semibold text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40"
-                                    />
-                                    {searchLoading && (
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                            <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-purple-300"></div>
+                        {/* Location Control Panel */}
+                        <div className="cz-glass rounded-[2rem] border border-[var(--border)] p-6 space-y-5 animate-[fadeIn_0.5s_ease-out]">
+                            {step !== 'confirm' && (
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1 h-3 bg-yellow-500" />
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--muted)]">
+                                            SET {activeLabel.toUpperCase()}
+                                        </p>
+                                    </div>
+                                    <div className="relative group">
+                                        <input
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder={`TARGET ADDRESS...`}
+                                            className="w-full rounded-2xl border border-white/5 bg-white/5 px-5 py-4 text-xs font-bold uppercase tracking-widest text-[var(--text)] placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-yellow-500/50 transition-all"
+                                        />
+                                        {searchLoading && (
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-yellow-500 border-t-transparent"></div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {searchResults.length > 0 && (
+                                        <div className="max-h-60 overflow-y-auto rounded-2xl cz-glass border border-[var(--border)] overflow-hidden shadow-2xl">
+                                            {searchResults.map((r, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleSelectSearchResult(r)}
+                                                    className="w-full px-5 py-4 text-left hover:bg-yellow-500/10 border-b border-white/5 transition-colors group"
+                                                >
+                                                    <p className="text-[10px] font-black uppercase text-[var(--text)] tracking-wider leading-relaxed group-hover:text-yellow-500">{r?.display_name}</p>
+                                                </button>
+                                            ))}
                                         </div>
                                     )}
                                 </div>
-
-                                {searchResults.length > 0 && (
-                                    <div className="max-h-56 overflow-auto rounded-xl border border-purple-300/20 bg-[#160d28] shadow-lg shadow-purple-500/20">
-                                        {searchResults.map((r, idx) => (
-                                            <button
-                                                key={`${r?.place_id || idx}`}
-                                                onClick={() => handleSelectSearchResult(r)}
-                                                className="w-full border-b border-white/5 px-4 py-3 text-left hover:bg-purple-400/15 last:border-b-0"
-                                            >
-                                                <p className="line-clamp-2 text-sm font-semibold" style={{color: '#FFFFFF'}}>{r?.display_name}</p>
-                                                <p className="mt-1 text-[11px] font-bold tracking-wide" style={{color: '#CCCCCC'}}>
-                                                    Tap to use this location
-                                                </p>
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-
-                                <div className="flex items-center justify-between pt-1">
-                                    <p className="text-[11px] font-semibold text-purple-100/60">
-                                        {tapToSet ? 'Tap map to set location' : 'Move map to set (center pin)'}
-                                    </p>
-                                    <button
-                                        type="button"
-                                        onClick={() => setTapToSet(v => !v)}
-                                        className="text-xs font-bold uppercase tracking-wide text-purple-300 hover:text-white"
-                                    >
-                                        {tapToSet ? 'Use move' : 'Use tap'}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="flex items-center space-x-4">
-                            <div className="h-3 w-3 rounded-full bg-emerald-400 ring-4 ring-emerald-500/20"></div>
-                            <div className="flex-1 overflow-hidden">
-                                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-purple-100/60">Pickup</p>
-                                <p className={`truncate text-sm ${step === 'pickup' ? 'font-bold text-white' : 'font-medium text-purple-100/70'}`}>
-                                    {pickup.address || 'Locating...'}
-                                </p>
-                            </div>
-                            {step !== 'pickup' && (
-                                <button onClick={() => setStep('pickup')} className="text-xs font-bold uppercase tracking-wide text-purple-300 hover:text-white">Edit</button>
                             )}
-                        </div>
 
-                        {(step === 'drop' || step === 'confirm') && (
-                            <div className="flex items-center space-x-4 border-t border-white/10 pt-4">
-                                <div className="h-3 w-3 rounded-full bg-rose-400 ring-4 ring-rose-500/20"></div>
-                                <div className="flex-1 overflow-hidden">
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-purple-100/60">Drop-off</p>
-                                    <p className={`truncate text-sm ${step === 'drop' ? 'font-bold text-white' : 'font-medium text-purple-100/70'}`}>
-                                        {drop.address || 'Select destination on map'}
-                                    </p>
+                            {/* Summary Tracker */}
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex flex-col items-center mt-1">
+                                        <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                                        <div className="w-[1px] h-6 bg-white/10 my-1" />
+                                        <div className={`w-3 h-3 rounded-full ${step === 'pickup' ? 'bg-white/10' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]'}`} />
+                                    </div>
+                                    <div className="flex-1 min-w-0 space-y-4">
+                                        <div>
+                                            <p className="text-[9px] font-black text-[var(--muted)] tracking-widest uppercase">PICKUP SOURCE</p>
+                                            <p className={`text-[11px] font-bold uppercase truncate tracking-wide ${step === 'pickup' ? 'text-yellow-500' : 'text-[var(--text)]'}`}>{pickup.address || 'LOCATING...'}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black text-[var(--muted)] tracking-widest uppercase">DROP DESTINATION</p>
+                                            <p className={`text-[11px] font-bold uppercase truncate tracking-wide ${step === 'drop' ? 'text-yellow-500' : 'text-[var(--text)]'}`}>{drop.address || 'WAITING FOR TARGET...'}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                {step === 'confirm' && (
-                                    <button onClick={() => setStep('drop')} className="text-xs font-bold uppercase tracking-wide text-purple-300 hover:text-white">Edit</button>
-                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── Map Surface ── */}
+                <div className="flex-1 relative z-0">
+                    <MapContainer center={mapCenter} zoom={15} className="h-full w-full">
+                        <MapEventsHandler onMoveEnd={tapToSet ? () => { } : handleMapMove} />
+                        <MapClickHandler enabled={tapToSet && step !== 'confirm'} onClick={handleMapClick} />
+                        {drivers.map(driver => (
+                            <DriverMarker
+                                key={driver._id}
+                                position={[driver.currentLocation.coordinates[1], driver.currentLocation.coordinates[0]]}
+                                driverName={driver.name}
+                                vehicleInfo={driver.vehicleInfo}
+                            />
+                        ))}
+                        {step === 'confirm' && routePositions.length > 0 && (
+                            <RoutePolyline positions={routePositions} />
+                        )}
+                    </MapContainer>
+
+                    {/* Mission Target HUD */}
+                    {step !== 'confirm' && (
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full z-[999] pointer-events-none mb-8">
+                            <div className="flex flex-col items-center">
+                                <div className="mb-4 animate-pulse cz-glass border border-yellow-500/30 px-6 py-2 rounded-full shadow-[0_0_30px_rgba(255,208,0,0.2)]">
+                                    <span className="text-[10px] cz-bebas tracking-[0.2em] text-yellow-500">
+                                        {addressFetching ? 'CALIBRATING...' : `${activeLabel.toUpperCase()} LOCK`}
+                                    </span>
+                                </div>
+                                <div className="relative">
+                                    <svg className="w-14 h-14 text-yellow-500 drop-shadow-[0_0_15px_rgba(255,208,0,0.5)]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <circle cx="12" cy="11" r="3" strokeWidth="2" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* ── Bottom Trigger Section ── */}
+                <div className="absolute bottom-0 left-0 right-0 z-[1000] p-6 lg:p-8">
+                    <div className="max-w-md mx-auto">
+
+                        {step === 'pickup' && (
+                            <button
+                                onClick={handleConfirmPickup}
+                                className="w-full cz-bebas text-2xl tracking-[0.1em] py-5 bg-yellow-500 text-black rounded-[2rem] shadow-[0_20px_50px_rgba(255,208,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all"
+                            >
+                                CONFIRM PICKUP POINT
+                            </button>
+                        )}
+                        {step === 'drop' && (
+                            <button
+                                onClick={handleConfirmDrop}
+                                className="w-full cz-bebas text-2xl tracking-[0.1em] py-5 bg-yellow-500 text-black rounded-[2rem] shadow-[0_20px_50px_rgba(255,208,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all"
+                            >
+                                LOCK DROP DESTINATION
+                            </button>
+                        )}
+                        {step === 'confirm' && (
+                            <div className="animate-[slideUp_0.4s_ease-out] space-y-4">
+                                <div className="cz-glass rounded-[2rem] p-6 border border-yellow-500/30 flex justify-between items-center shadow-2xl">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20">
+                                            <svg className="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" /></svg>
+                                        </div>
+                                        <div>
+                                            <p className="cz-bebas text-2xl tracking-widest text-[var(--text)]">STANDARD OPS</p>
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--muted)]">SECURE TRANSPORT</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-3xl cz-bebas text-yellow-500 drop-shadow-[0_0_10px_rgba(255,208,0,0.3)]">₹{fareEstimate}</p>
+                                        <p className="text-[9px] font-black uppercase text-[var(--muted)]">TOTAL EST</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleRequestRide}
+                                    disabled={loading}
+                                    className="w-full cz-bebas text-3xl tracking-[0.1em] py-6 bg-yellow-500 text-black rounded-[2rem] shadow-[0_25px_60px_rgba(255,208,0,0.4)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                                >
+                                    {loading ? 'DEPLOYING...' : 'INITIATE MISSION'}
+                                </button>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
-
-            {/* Map */}
-            <div className="flex-1 relative">
-                <MapContainer center={mapCenter} zoom={15} className="h-full w-full">
-                    <MapEventsHandler onMoveEnd={tapToSet ? () => { } : handleMapMove} />
-                    <MapClickHandler enabled={tapToSet && step !== 'confirm'} onClick={handleMapClick} />
-                    {drivers.map(driver => (
-                        <DriverMarker
-                            key={driver._id}
-                            position={[driver.currentLocation.coordinates[1], driver.currentLocation.coordinates[0]]}
-                            driverName={driver.name}
-                            vehicleInfo={driver.vehicleInfo}
-                        />
-                    ))}
-                    {step === 'confirm' && routePositions.length > 0 && (
-                        <RoutePolyline positions={routePositions} />
-                    )}
-                </MapContainer>
-
-                {/* Center Target Pin */}
-                {step !== 'confirm' && (
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full z-[999] pointer-events-none mb-6">
-                        <div className="flex flex-col items-center">
-                            <div className="mb-3 animate-bounce rounded-full border border-purple-400/30 bg-[#0b1120]/92 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-slate-100 shadow-2xl shadow-purple-500/20 backdrop-blur-md">
-                                {addressFetching
-                                    ? 'Finding address...'
-                                    : tapToSet
-                                        ? (step === 'pickup' ? 'Tap to set pickup' : 'Tap to set drop-off')
-                                        : (step === 'pickup' ? 'Move to set pickup' : 'Move to set drop-off')}
-                            </div>
-                            <svg className="w-12 h-12 text-purple-400 drop-shadow-2xl" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                            </svg>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Bottom Actions */}
-            <div className="z-[1000] rounded-t-[3rem] border-t border-white/10 bg-[#0b1120]/92 p-8 shadow-[0_-20px_50px_-12px_rgba(14,165,233,0.28)] backdrop-blur-xl">
-                {step === 'pickup' && (
-                    <button
-                        onClick={handleConfirmPickup}
-                        className="w-full rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 py-4 text-lg font-black text-white shadow-xl shadow-purple-500/20 transition-all hover:from-purple-400 hover:to-indigo-400 active:scale-[0.98]"
-                    >
-                        Confirm Pickup
-                    </button>
-                )}
-                {step === 'drop' && (
-                    <button
-                        onClick={handleConfirmDrop}
-                        className="w-full rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 py-4 text-lg font-black text-white shadow-xl shadow-purple-500/20 transition-all hover:from-purple-400 hover:to-indigo-400 active:scale-[0.98]"
-                    >
-                        Confirm Destination
-                    </button>
-                )}
-                {step === 'confirm' && (
-                    <div className="space-y-6">
-                        <div className="flex justify-between items-center py-5 border border-navy/5 rounded-2xl px-6 bg-soft-white shadow-inner">
-                            <div className="flex items-center space-x-5">
-                                <div className="p-3.5 bg-white rounded-xl shadow-md border border-navy/5">
-                                    <span className="text-3xl">🚗</span>
-                                </div>
-                                <div>
-                                    <p className="font-black text-navy text-lg">Standard Car</p>
-                                    <p className="text-xs text-navy/40 font-bold uppercase tracking-wider">Fast & Reliable</p>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-3xl font-black text-navy tracking-tight">₹{fareEstimate}</p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={handleRequestRide}
-                            disabled={loading}
-                            className="w-full rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 py-4 text-lg font-black text-white shadow-2xl shadow-purple-500/30 transition-all hover:from-purple-400 hover:to-indigo-400 active:scale-[0.98] disabled:opacity-50"
-                        >
-                            {loading ? 'Processing...' : 'Request Ride'}
-                        </button>
-                    </div>
-                )}
-            </div>
-        </div>
         </div>
     );
 };

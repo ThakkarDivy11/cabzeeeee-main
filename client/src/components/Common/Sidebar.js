@@ -95,7 +95,7 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
       {/* Sidebar */}
       <div
         className={`
-          fixed inset-y-0 left-0 z-50 bg-white border-r border-[#e5e5e5] text-black flex flex-col dark:bg-black/40 dark:border-white/10 dark:text-white dark:backdrop-blur
+          fixed inset-y-0 left-0 z-50 cz-glass border-r border-[var(--border)] text-[var(--text)] flex flex-col
           lg:translate-x-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
@@ -106,14 +106,14 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
         }}
       >
         {/* Brand + collapse toggle */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-[#e5e5e5] flex-shrink-0 dark:border-white/10">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-[var(--border)] flex-shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-purple-700/50 border border-purple-500/30 flex items-center justify-center flex-shrink-0 shadow-purple">
-              <span className="text-black font-black text-sm leading-none dark:text-white">CZ</span>
+            <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(255,208,0,0.2)]">
+              <span className="text-[var(--text)] cz-bebas text-sm translate-y-[1px]">CZ</span>
             </div>
             {!collapsed && (
               <span
-                className="font-black text-black text-base tracking-tight font-outfit leading-none dark:text-white"
+                className="cz-bebas text-xl tracking-widest text-[var(--text)] leading-none mt-1"
                 style={{ transition: 'opacity 0.15s ease', whiteSpace: 'nowrap' }}
               >
                 CabZee
@@ -123,7 +123,7 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
           {/* Collapse toggle — desktop only */}
           <button
             onClick={() => setCollapsed(c => !c)}
-            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-black/60 hover:text-black hover:bg-black/5 transition-colors flex-shrink-0 dark:text-white/60 dark:hover:text-white dark:hover:bg-white/10"
+            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-[var(--muted)] hover:text-[var(--text)] hover:bg-white/5 transition-colors flex-shrink-0"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -153,11 +153,11 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
               }}
               title={collapsed ? link.name : undefined}
               className={({ isActive }) => `
-                flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold
+                flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest
                 transition-all duration-200 group relative
                 ${isActive
-                  ? 'bg-purple-500/10 text-black border-l-[3px] border-purple-600 pl-[calc(0.75rem-3px)] shadow-sm dark:bg-purple-500/20 dark:text-purple-200 dark:border-purple-400'
-                  : 'text-black hover:bg-black/5 border-l-[3px] border-transparent pl-[calc(0.75rem-3px)] dark:text-gray-300 dark:hover:bg-white/10'
+                  ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-500 border-l-[3px] border-yellow-500 pl-[calc(0.75rem-3px)] shadow-[0_0_15px_rgba(255,208,0,0.1)]'
+                  : 'text-[var(--text)] hover:bg-white/5 border-l-[3px] border-transparent pl-[calc(0.75rem-3px)]'
                 }
               `}
             >
@@ -196,16 +196,16 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
         <div className="flex-shrink-0 p-3 border-t border-[#e5e5e5] dark:border-white/10">
           {!collapsed ? (
             <div className="flex items-center gap-3 px-2 py-2">
-              <div className="w-8 h-8 rounded-full bg-purple-600/80 border border-purple-500/30 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-yellow-500 border border-yellow-400 flex items-center justify-center text-black text-xs font-black flex-shrink-0 shadow-[0_0_15px_rgba(255,208,0,0.3)]">
                 {user?.name?.charAt(0)?.toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-black truncate leading-tight dark:text-white">{user?.name}</p>
-                <p className="text-xs text-black capitalize leading-tight dark:text-gray-400">{user?.role}</p>
+                <p className="text-sm font-black text-[var(--text)] uppercase tracking-widest truncate leading-tight">{user?.name}</p>
+                <p className="text-[10px] font-black text-yellow-500 uppercase tracking-widest leading-tight mt-0.5">{user?.role}</p>
               </div>
               <button
                 onClick={handleLogout}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-black/60 hover:text-danger hover:bg-danger/10 transition-colors flex-shrink-0 dark:text-white/60"
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors flex-shrink-0"
                 title="Sign out"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -215,12 +215,12 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 py-1">
-              <div className="w-8 h-8 rounded-full bg-purple-600/80 border border-purple-500/30 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-8 h-8 rounded-full bg-yellow-500 border border-yellow-400 flex items-center justify-center text-black text-xs font-black shadow-[0_0_15px_rgba(255,208,0,0.3)]">
                 {user?.name?.charAt(0)?.toUpperCase()}
               </div>
               <button
                 onClick={handleLogout}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-soft-white/30 hover:text-danger hover:bg-danger/10 transition-colors"
+                className="w-7 h-7 flex items-center justify-center rounded-lg text-white/20 hover:text-red-500 hover:bg-red-500/10 transition-colors"
                 title="Sign out"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

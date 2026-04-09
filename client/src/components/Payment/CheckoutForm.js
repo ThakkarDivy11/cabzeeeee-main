@@ -61,50 +61,54 @@ const CheckoutForm = ({ clientSecret, amount, onSuccess, onCancel, paymentMethod
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {!paymentMethodId && (
-        <div className="p-4 rounded-xl" style={{backgroundColor: '#FFFFFF', border: '1.5px solid #E0E0E0'}}>
+        <div className="p-5 rounded-2xl border border-gray-100 bg-gray-50 transition-all focus-within:ring-2 focus-within:ring-yellow-400/30 dark:border-white/5 dark:bg-black/40">
           <CardElement options={{
             style: {
               base: {
                 fontSize: '16px',
-                color: '#1A1A1A',
-                backgroundColor: '#FFFFFF',
+                color: '#1a1a1a',
+                letterSpacing: '0.02em',
                 '::placeholder': {
-                  color: '#AAAAAA',
+                  color: '#9ca3af',
                 },
               },
               invalid: {
-                color: '#DC2626',
+                color: '#ef4444',
               },
             },
           }} />
         </div>
       )}
 
-      <div className="flex flex-col space-y-3">
+      {paymentMethodId && (
+        <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/5 p-6 text-center">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-600 dark:text-yellow-400/60">AUTHORIZED DEBIT</span>
+            <p className="mt-2 text-sm font-bold text-gray-900 dark:text-white">Confirm Charge: <span className="text-lg font-black tracking-tight">₹{amount}</span></p>
+        </div>
+      )}
+
+      <div className="flex flex-col space-y-4">
         <button
           type="submit"
           disabled={!stripe || processing}
-          className="w-full rounded-[2rem] bg-gradient-to-r from-purple-500 to-indigo-500 py-4 text-sm font-black text-white shadow-xl shadow-purple-500/20 flex items-center justify-center space-x-2 transition-all hover:from-purple-400 hover:to-indigo-400 active:scale-[0.98] disabled:opacity-50"
+          className="group w-full rounded-[2.5rem] bg-[#FFD000] py-5 text-black transition-all duration-300 hover:scale-[1.05] hover:shadow-lg hover:shadow-yellow-400/30 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
         >
           {processing ? (
             <>
-              <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <span>Processing...</span>
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/20 border-t-black"></div>
+              <span className="text-sm font-black tracking-widest uppercase">Authorizing...</span>
             </>
           ) : (
-            <span>Pay ₹{amount}</span>
+            <span className="text-sm font-black tracking-widest uppercase">Pay ₹{amount}</span>
           )}
         </button>
         <button
           type="button"
           onClick={onCancel}
           disabled={processing}
-          className="w-full bg-gray-100 text-gray-800 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
+          className="w-full py-2 text-xs font-black tracking-widest text-gray-400 hover:text-gray-900 transition-colors uppercase dark:hover:text-white"
         >
-          Cancel
+          Cancel Operation
         </button>
       </div>
     </form>

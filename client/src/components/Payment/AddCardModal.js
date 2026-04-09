@@ -43,37 +43,42 @@ const AddCardInner = ({ clientSecret, onClose, onAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <form onSubmit={handleSave} className="space-y-8">
+      <div className="rounded-2xl border border-gray-100 bg-gray-50 p-6 dark:border-white/5 dark:bg-black/40">
         <CardElement
           options={{
             style: {
               base: {
                 fontSize: '16px',
-                color: '#E2E8F0',
-                '::placeholder': { color: '#64748B' }
+                color: '#1a1a1a',
+                letterSpacing: '0.05em',
+                '::placeholder': { color: '#a0a0a0' }
               },
-              invalid: { color: '#EF4444' }
+              invalid: { color: '#ef4444' }
             }
           }}
+          className="dark:![&_.Input]:text-white"
         />
+        {/* Force dark mode styles via helper class if needed, but Stripe appearance is better */}
       </div>
 
-      <div className="flex flex-col space-y-3">
+      <div className="flex flex-col space-y-4">
         <button
           type="submit"
           disabled={!stripe || processing}
-          className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 py-4 font-bold text-white transition-all hover:from-purple-400 hover:to-indigo-400 disabled:opacity-50"
+          className="group w-full rounded-2xl bg-[#FFD000] py-4 text-black transition-all duration-300 hover:scale-[1.05] hover:shadow-lg hover:shadow-yellow-400/30 active:scale-95 disabled:opacity-50"
         >
-          {processing ? 'Saving...' : 'Save Card'}
+          <span className="text-sm font-black tracking-widest uppercase">
+            {processing ? 'SYNCING...' : 'Link Secure Asset'}
+          </span>
         </button>
         <button
           type="button"
           onClick={onClose}
           disabled={processing}
-          className="w-full rounded-xl border border-white/10 bg-white/5 py-3 font-bold text-slate-200 transition-all hover:bg-white/10"
+          className="w-full rounded-2xl border border-gray-100 bg-white py-3 text-xs font-bold tracking-widest text-gray-400 transition-all hover:bg-gray-50 hover:text-gray-900 dark:border-white/10 dark:bg-white/5 dark:text-white/30 dark:hover:bg-white/10 dark:hover:text-white"
         >
-          Cancel
+          CANCEL SETUP
         </button>
       </div>
     </form>
@@ -124,23 +129,39 @@ const AddCardModal = ({ isOpen, onClose, onAdded }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm pointer-events-auto">
-      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0b1120]/95 p-8 text-slate-200 shadow-2xl shadow-purple-500/20">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-black text-slate-100">Add Card</h2>
-          <button onClick={onClose} className="rounded-full p-2 transition-colors hover:bg-white/10">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/40 px-4 backdrop-blur-md dark:bg-black/40 pointer-events-auto">
+      <div className="w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white p-8 shadow-2xl transition-all duration-300 dark:bg-neutral-900 dark:border dark:border-white/10">
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-yellow-600 dark:text-yellow-400/60">IDENTITY VERIFICATION</span>
+            <h2 className="text-2xl font-black tracking-tight text-gray-900 dark:text-white">LINK CARD</h2>
+          </div>
+          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-all hover:bg-gray-200 hover:text-gray-900 dark:bg-white/5 dark:text-white/30 dark:hover:bg-white/10 dark:hover:text-white">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {loading && (
-          <div className="py-10 text-center font-semibold text-slate-400">Preparing secure card form...</div>
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-yellow-400/20 border-t-yellow-400"></div>
+            <p className="mt-6 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Establishing secure tunnel...</p>
+          </div>
         )}
 
         {!loading && clientSecret && (
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
+          <Elements stripe={stripePromise} options={{ 
+            clientSecret,
+            appearance: { 
+              theme: 'none', // Custom appearance
+              variables: { 
+                colorPrimary: '#FFD000',
+                colorBackground: '#f9fafb',
+                colorText: '#1f2937',
+              } 
+            } 
+          }}>
             <AddCardInner clientSecret={clientSecret} onClose={onClose} onAdded={onAdded} />
           </Elements>
         )}

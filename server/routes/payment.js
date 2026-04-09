@@ -318,7 +318,7 @@ router.get('/split/summary/driver', protect, async (req, res) => {
   try {
     const driverId = req.user._id;
     const [agg] = await PaymentSplit.aggregate([
-      { $match: { driverId: mongoose.Types.ObjectId(driverId) } },
+      { $match: { driverId: new mongoose.Types.ObjectId(driverId) } },
       { $group: { _id: null, totalEarning: { $sum: '$driverEarning' }, rideCount: { $sum: 1 } } }
     ]);
     const detail = await PaymentSplit.find({ driverId })

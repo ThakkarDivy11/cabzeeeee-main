@@ -1,675 +1,490 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import {
-  Zap,
-  MapPin,
-  ShieldCheck,
-  CreditCard,
-  Users,
-  Clock,
-  ArrowRight,
-  Star,
-  MessageCircle,
-  Navigation,
-  ChevronRight,
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import "./LandingPage.css";
+
+const MARQUEE_ITEMS = ["SAFE RIDES","INSTANT BOOKING","LIVE TRACKING","VERIFIED DRIVERS","AFFORDABLE FARES","24/7 SUPPORT","GJ REGISTERED"];
+const STEPS = [
+  { icon:"📍", title:"Set Your Location", text:"Enter pickup & drop in seconds. CabZee auto-detects your location for faster booking." },
+  { icon:"🚗", title:"Choose Your Ride", text:"Pick from Cab, Auto, or Premium — all with upfront transparent pricing." },
+  { icon:"📡", title:"Track in Real-Time", text:"Watch your driver live on the map. Get ETA, plate number & driver details instantly." },
+  { icon:"🎉", title:"Arrive in Style", text:"Pay via UPI, cash or card. Rate your driver and you're done!" },
+];
+const FEATURES = [
+  { icon:"⚡", name:"Instant Matching", text:"AI matches you with the nearest verified driver in under 30 seconds — no waiting, no guessing.", num:"01" },
+  { icon:"🗺️", name:"Live GPS Tracking", text:"Track your ride in real-time. Share trip with family. See driver ETA and plate live.", num:"02" },
+  { icon:"🛡️", name:"Verified Drivers", text:"Every driver is background-checked and rated. Plate number shared before pickup — always.", num:"03" },
+  { icon:"💳", name:"Flexible Payments", text:"Cash, UPI, card or CabZee wallet — pay however you like. Receipts delivered instantly.", num:"04" },
+  { icon:"💰", name:"Upfront Pricing", text:"See your exact fare before you book. Zero hidden charges — what you see is what you pay.", num:"05" },
+  { icon:"🌙", name:"24/7 Availability", text:"Rides available round the clock across Gujarat. Late night, early morning — CabZee is always on.", num:"06" },
+];
+const STATS = [
+  { count: 500, suffix: "K+", label: "Happy Riders" },
+  { count: 50, suffix: "K+", label: "Active Drivers" },
+  { count: 100, suffix: "+", label: "Cities Covered" },
+  { count: 4.9, suffix: "★", label: "Average Rating", decimal: true },
+];
+const TESTIMONIALS = [
+  { text:"\"Booked a cab at 2 AM and Divy arrived in 4 minutes. Safe ride, great conversation, no surge pricing. CabZee is my go-to now.\"", name:"Priya Mehta", sub:"Ahmedabad · Regular Rider", avatar:"👩" },
+  { text:"\"The live tracking feature gives me so much peace of mind. I share my trip with my family and they always know I'm safe.\"", name:"Aryan Shah", sub:"Surat · Daily Commuter", avatar:"👦" },
+  { text:"\"Upfront pricing is a game changer. I saw ₹249 before I booked — that's exactly what I paid. Zero surprises, always.\"", name:"Sneha Joshi", sub:"Vadodara · Business Traveler", avatar:"👩" },
+];
+
+function useCountUp(target, decimal, active) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let start = null;
+    const duration = 2000;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVal(decimal ? parseFloat((eased * target).toFixed(1)) : Math.floor(eased * target));
+      if (p < 1) requestAnimationFrame(step);
+      else setVal(target);
+    };
+    requestAnimationFrame(step);
+  }, [active, target, decimal]);
+  return val;
+}
+
+function StatBlock({ count, suffix, label, decimal, active }) {
+  const val = useCountUp(count, decimal, active);
+  return (
+    <div className="cz-stat-block">
+      <div className="cz-stat-num">{decimal ? val.toFixed(1) : val}{suffix}</div>
+      <div className="cz-stat-label">{label}</div>
+    </div>
+  );
+}
+
+function CarSvg() {
+  return (
+    <svg className="cz-car-svg" viewBox="0 0 104 52" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="20" width="86" height="22" rx="5" fill="#FFD000"/>
+      <path d="M22 20 L31 7 L72 7 L82 20Z" fill="#e6bc00"/>
+      <rect x="33" y="9" width="15" height="10" rx="2" fill="#1a2a4a" opacity=".85"/>
+      <rect x="52" y="9" width="15" height="10" rx="2" fill="#1a2a4a" opacity=".85"/>
+      <rect x="36" y="6.5" width="28" height="2" rx="1" fill="#cc9e00"/>
+      <line x1="50" y1="20" x2="50" y2="42" stroke="#cc9e00" strokeWidth="1.2" opacity=".45"/>
+      <rect x="86" y="25" width="9" height="5" rx="2" fill="#cc9e00"/>
+      <rect x="87" y="26" width="7" height="3" rx="1" fill="#fffde0" opacity=".9"/>
+      <rect x="4" y="25" width="5" height="7" rx="1.5" fill="#ff4444" opacity=".85"/>
+      <ellipse cx="24" cy="42" rx="11" ry="5" fill="#111"/>
+      <ellipse cx="76" cy="42" rx="11" ry="5" fill="#111"/>
+      <g className="cz-wheel-a">
+        <circle cx="24" cy="42" r="10" fill="#1e1e2e"/>
+        <circle cx="24" cy="42" r="7" fill="#2a2a3e"/>
+        <circle cx="24" cy="42" r="3" fill="#FFD000"/>
+        <line x1="24" y1="35" x2="24" y2="49" stroke="#FFD000" strokeWidth="1.5" opacity=".7"/>
+        <line x1="17" y1="42" x2="31" y2="42" stroke="#FFD000" strokeWidth="1.5" opacity=".7"/>
+        <line x1="19" y1="37" x2="29" y2="47" stroke="#FFD000" strokeWidth="1" opacity=".4"/>
+        <line x1="29" y1="37" x2="19" y2="47" stroke="#FFD000" strokeWidth="1" opacity=".4"/>
+      </g>
+      <g className="cz-wheel-a">
+        <circle cx="76" cy="42" r="10" fill="#1e1e2e"/>
+        <circle cx="76" cy="42" r="7" fill="#2a2a3e"/>
+        <circle cx="76" cy="42" r="3" fill="#FFD000"/>
+        <line x1="76" y1="35" x2="76" y2="49" stroke="#FFD000" strokeWidth="1.5" opacity=".7"/>
+        <line x1="69" y1="42" x2="83" y2="42" stroke="#FFD000" strokeWidth="1.5" opacity=".7"/>
+        <line x1="71" y1="37" x2="81" y2="47" stroke="#FFD000" strokeWidth="1" opacity=".4"/>
+        <line x1="81" y1="37" x2="71" y2="47" stroke="#FFD000" strokeWidth="1" opacity=".4"/>
+      </g>
+      <text x="44" y="34" fontFamily="Arial" fontSize="7" fill="#000" fontWeight="bold" opacity=".5">CABZEE</text>
+    </svg>
+  );
+}
+
+function CarStrip() {
+  const bldH = [28,36,44,22,40,50,30,20,46,34];
+  const bldW = [22,16,28,18,32,14,26,20,36,24];
+  const trees = ['🌴','🌳','💡','🌲','🏠'];
+  const buildings = [];
+  const treeItems = [];
+  let cx = 0;
+  for (let rep = 0; rep < 2; rep++) {
+    let x = cx;
+    while (x - cx < 1600) {
+      const idx = (buildings.length * 7 + x) % bldH.length;
+      buildings.push({ left: x, width: bldW[idx], height: bldH[idx] });
+      x += bldW[idx] + 4 + ((x * 13) % 14);
+    }
+    if (rep === 0) cx = x;
+  }
+  let tx = 0;
+  for (let rep = 0; rep < 2; rep++) {
+    let x = tx;
+    while (x - tx < 1800) {
+      const idx = (treeItems.length * 3 + x) % trees.length;
+      treeItems.push({ left: x, emoji: trees[idx], size: 18 + (x % 8) });
+      x += 55 + ((x * 11) % 75);
+    }
+    if (rep === 0) tx = x;
+  }
+  return (
+    <div className="cz-car-strip" aria-hidden="true">
+      <div className="cz-city-layer">
+        {buildings.map((b, i) => (
+          <div key={i} className="cz-bld" style={{ position:'absolute', left:b.left, width:b.width, height:b.height, bottom:0 }} />
+        ))}
+      </div>
+      <div className="cz-tree-layer">
+        {treeItems.map((t, i) => (
+          <div key={i} className="cz-tree" style={{ left:t.left, fontSize:t.size }}>{t.emoji}</div>
+        ))}
+      </div>
+      <div className="cz-road-layer">
+        <div className="cz-road-surface"/>
+        <div className="cz-road-stripe">
+          <div className="cz-road-dashes-wrap">
+            {Array.from({length:22}).map((_,i) => <div key={i} className="cz-rd"/>)}
+          </div>
+        </div>
+      </div>
+      <div className="cz-strip-car-wrap">
+        <div className="cz-car-main">
+          <div className="cz-speed-wrap">
+            {[0,1,2,3].map(i => <div key={i} className="cz-sl"/>)}
+          </div>
+          <div className="cz-exhaust-wrap">
+            {[0,1,2].map(i => <div key={i} className="cz-puff"/>)}
+          </div>
+          <CarSvg/>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [dark, setDark] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  const [statsActive, setStatsActive] = useState(false);
+  const cursorRef = useRef(null);
+  const ringRef = useRef(null);
+  const statsRef = useRef(null);
+  const rxRef = useRef(window.innerWidth/2);
+  const ryRef = useRef(window.innerHeight/2);
+  const mxRef = useRef(window.innerWidth/2);
+  const myRef = useRef(window.innerHeight/2);
+  const [hovering, setHovering] = useState(false);
 
-  const stats = [
-    { num: '5M+', label: 'Rides' },
-    { num: '50K+', label: 'Drivers' },
-    { num: '4.9', label: 'Rating' },
-    { num: '<3 min', label: 'Avg Wait' },
-  ];
+  useEffect(() => {
+    const onMove = (e) => {
+      mxRef.current = e.clientX;
+      myRef.current = e.clientY;
+      if (cursorRef.current) {
+        cursorRef.current.style.left = e.clientX + 'px';
+        cursorRef.current.style.top = e.clientY + 'px';
+      }
+    };
+    const raf = () => {
+      rxRef.current += (mxRef.current - rxRef.current) * 0.12;
+      ryRef.current += (myRef.current - ryRef.current) * 0.12;
+      if (ringRef.current) {
+        ringRef.current.style.left = rxRef.current + 'px';
+        ringRef.current.style.top = ryRef.current + 'px';
+      }
+      rafId = requestAnimationFrame(raf);
+    };
+    let rafId = requestAnimationFrame(raf);
+    document.addEventListener('mousemove', onMove);
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll);
+    return () => { document.removeEventListener('mousemove', onMove); window.removeEventListener('scroll', onScroll); cancelAnimationFrame(rafId); };
+  }, []);
 
-  const features = [
-    { icon: MapPin, title: 'Real-time Tracking', desc: 'See your driver live on the map. No guessing, no waiting around.' },
-    { icon: MessageCircle, title: 'AI Chatbot', desc: 'Get instant answers and quick help—right inside the app.' },
-    { icon: CreditCard, title: 'Secure Payments', desc: 'Cash, UPI, card—pay your way with encrypted checkout.' },
-    { icon: Users, title: '24/7 Support', desc: 'Real humans and smart tools, always ready to help.' },
-    { icon: ShieldCheck, title: 'Safety Shield', desc: 'Verified drivers, OTP rides, and live safety alerts.' },
-    { icon: Zap, title: 'Instant Match', desc: 'AI finds you the best driver in under 30 seconds.' },
-  ];
+  useEffect(() => {
+    if (!statsRef.current) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStatsActive(true); }, { threshold: 0.2 });
+    obs.observe(statsRef.current);
+    return () => obs.disconnect();
+  }, []);
 
-  const steps = [
-    { n: '01', title: 'Set Destination', desc: 'Open the app, enter where you want to go.' },
-    { n: '02', title: 'Get Matched', desc: 'We find the closest, highest-rated driver near you.' },
-    { n: '03', title: 'Enjoy Your Ride', desc: 'Track live, share trip, and pay seamlessly.' },
-  ];
-
-  const trackingPoints = [
-    { icon: Navigation, title: 'Live tracking', desc: 'GPS updated every 2 seconds.' },
-    { icon: ShieldCheck, title: 'OTP safety', desc: 'Your ride begins only after OTP.' },
-    { icon: Zap, title: 'Route optimization', desc: 'Smart routing beats traffic every time.' },
-  ];
-
-  const testimonials = [
-    { name: 'Saran Jenkins', role: 'Daily Commuter', review: 'CabZee is the fastest cab app I’ve ever used. Got matched in under a minute during rush hour—insane.' },
-    { name: 'Marcus Tran', role: 'Business Executive', review: 'Clean cars, professional drivers, and the live tracking makes every airport run stress-free.' },
-    { name: 'Elena Rossi', role: 'Solo Night Rider', review: 'The OTP feature gave me real peace of mind on late-night rides. I can’t ride any other way.' },
-  ];
+  const marqueeItems = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   return (
-    <div
-      className="cabzee-landing"
-      style={{
-        background: '#060B18',
-        color: '#e2e8f0',
-        fontFamily:
-          '"SF Pro Display","SF Pro Text","San Francisco",-apple-system,BlinkMacSystemFont,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
-        overflowX: 'hidden',
-      }}
-    >
-      <style>{`
-        .cabzee-landing, .cabzee-landing * { box-sizing: border-box; }
-        .cabzee-landing * { margin: 0; padding: 0; }
-        .cabzee-landing a { color: inherit; }
-
-        .glass {
-          background: rgba(255,255,255,0.04);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(0,255,255,0.12);
-          box-shadow: 0 0 30px rgba(0,255,255,0.08);
-        }
-        .glass-card {
-          background: rgba(255,255,255,0.05);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(0,255,255,0.15);
-          box-shadow: 0 0 30px rgba(0,229,255,0.2);
-          border-radius: 20px;
-        }
-        .neon-btn {
-          background: linear-gradient(135deg, #00e5ff, #2979ff);
-          color: #000;
-          font-weight: 900;
-          border: none;
-          border-radius: 12px;
-          padding: 14px 32px;
-          cursor: pointer;
-          font-size: 15px;
-          transition: all 0.3s ease;
-          box-shadow: 0 0 20px rgba(0,229,255,0.4);
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          white-space: nowrap;
-        }
-        .neon-btn:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(0,229,255,0.7); }
-        .ghost-btn {
-          background: rgba(0,229,255,0.08);
-          color: #00e5ff;
-          font-weight: 800;
-          border: 1px solid rgba(0,229,255,0.3);
-          border-radius: 12px;
-          padding: 14px 32px;
-          cursor: pointer;
-          font-size: 15px;
-          transition: all 0.3s ease;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          white-space: nowrap;
-        }
-        .ghost-btn:hover { background: rgba(0,229,255,0.15); border-color: rgba(0,229,255,0.6); transform: translateY(-2px); }
-
-        .section { padding: 100px 24px; max-width: 1200px; margin: 0 auto; }
-        .gradient-text {
-          background: linear-gradient(135deg, #00e5ff, #2979ff);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        .feature-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(0,255,255,0.1);
-          border-radius: 16px;
-          padding: 28px;
-          transition: all 0.3s ease;
-        }
-        .feature-card:hover {
-          background: rgba(0,229,255,0.06);
-          border-color: rgba(0,229,255,0.3);
-          transform: translateY(-4px);
-          box-shadow: 0 0 30px rgba(0,229,255,0.15);
-        }
-        .stat-card {
-          text-align: center;
-          padding: 32px 24px;
-          border: 1px solid rgba(0,255,255,0.12);
-          border-radius: 16px;
-          background: rgba(255,255,255,0.03);
-          transition: all 0.3s;
-        }
-        .stat-card:hover { border-color: rgba(0,229,255,0.4); box-shadow: 0 0 25px rgba(0,229,255,0.15); }
-
-        .step-num {
-          width: 56px; height: 56px;
-          background: linear-gradient(135deg, #00e5ff22, #2979ff22);
-          border: 1px solid rgba(0,229,255,0.3);
-          border-radius: 50%;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 20px; font-weight: 900; color: #00e5ff;
-          flex-shrink: 0;
-        }
-        .testimonial-card {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(0,255,255,0.1);
-          border-radius: 20px;
-          padding: 32px;
-          transition: all 0.3s;
-        }
-        .testimonial-card:hover { border-color: rgba(0,229,255,0.3); box-shadow: 0 0 25px rgba(0,229,255,0.1); }
-
-        .map-mock {
-          width: 100%; height: 320px;
-          background: linear-gradient(135deg, #0d1b2e 0%, #0a1628 50%, #0d1b2e 100%);
-          border-radius: 16px;
-          position: relative;
-          overflow: hidden;
-        }
-        .map-grid {
-          position: absolute; inset: 0;
-          background-image: linear-gradient(rgba(0,229,255,0.05) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(0,229,255,0.05) 1px, transparent 1px);
-          background-size: 40px 40px;
-        }
-        .map-road-h { position: absolute; height: 6px; background: rgba(0,229,255,0.15); left: 0; right: 0; }
-        .map-road-v { position: absolute; width: 6px; background: rgba(0,229,255,0.15); top: 0; bottom: 0; }
-        .pulse-pin {
-          position: absolute;
-          width: 20px; height: 20px;
-          border-radius: 50%;
-          background: #00e5ff;
-          box-shadow: 0 0 20px rgba(0,229,255,0.8);
-        }
-        .pulse-ring {
-          position: absolute;
-          width: 40px; height: 40px;
-          border-radius: 50%;
-          border: 2px solid rgba(0,229,255,0.5);
-          animation: ping 1.5s infinite;
-          top: -10px; left: -10px;
-        }
-        @keyframes ping { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
-        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        .float-anim { animation: float 4s ease-in-out infinite; }
-
-        .nav-link { color: #94a3b8; text-decoration: none; font-weight: 600; font-size: 14px; transition: color 0.2s; }
-        .nav-link:hover { color: #00e5ff; }
-        .hidden-mobile { display: flex; }
-
-        @media (max-width: 768px) {
-          .hero-grid { flex-direction: column !important; }
-          .hidden-mobile { display: none !important; }
-          .features-grid { grid-template-columns: 1fr 1fr !important; }
-          .stats-grid { grid-template-columns: 1fr 1fr !important; }
-          .steps-grid { grid-template-columns: 1fr !important; }
-          .tracking-grid { flex-direction: column !important; }
-          .testimonials-grid { grid-template-columns: 1fr !important; }
-          .footer-cols { flex-direction: column !important; gap: 32px !important; }
-        }
-        @media (max-width: 480px) {
-          .features-grid { grid-template-columns: 1fr !important; }
-          .stats-grid { grid-template-columns: 1fr 1fr !important; }
-        }
-      `}</style>
+    <div className={`cz-root ${dark ? 'cabzee-dark' : 'cabzee-light'}`}
+      onMouseOver={e => { if (e.target.closest('a,button')) setHovering(true); }}
+      onMouseOut={e => { if (e.target.closest('a,button')) setHovering(false); }}>
+      <div className="cz-noise"/>
+      <div ref={cursorRef} className={`cz-cursor${hovering ? ' big' : ''}`}/>
+      <div ref={ringRef} className="cz-ring"/>
 
       {/* NAV */}
-      <nav
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          background: 'rgba(6,11,24,0.85)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(0,255,255,0.08)',
-          padding: '0 32px',
-          height: '70px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 16,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 10,
-              background: 'linear-gradient(135deg,#00e5ff,#2979ff)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 900,
-              fontSize: 14,
-              color: '#000',
-            }}
-          >
-            CZ
-          </div>
-          <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: '-0.5px' }}>CabZee</span>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }} className="hidden-mobile">
-          {['Features', 'How it Works', 'Tracking', 'Testimonials'].map((label) => (
-            <a key={label} href={`#${label.toLowerCase().replace(/ /g, '-')}`} className="nav-link">
-              {label}
-            </a>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          <button onClick={() => navigate('/login')} className="ghost-btn" style={{ padding: '10px 20px', fontSize: 14 }}>
-            Login
-          </button>
-          <button onClick={() => navigate('/register')} className="neon-btn" style={{ padding: '10px 20px', fontSize: 14 }}>
-            Get Started
-          </button>
+      <nav className={`cz-nav${scrolled ? ' scrolled' : ''}`}>
+        <div className="cz-logo">🚕 CABZEE</div>
+        <ul className="cz-nav-links">
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#drive">Drive</a></li>
+          <li><a href="#app">Get App</a></li>
+        </ul>
+        <div className="cz-nav-right">
+          <button className="cz-theme-toggle" onClick={() => setDark(d => !d)}>{dark ? '☀️' : '🌙'}</button>
+          <button onClick={() => navigate('/register')} className="cz-nav-cta">Book a Ride →</button>
         </div>
       </nav>
 
       {/* HERO */}
-      <div style={{ paddingTop: 70 }}>
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: '0 auto',
-            padding: '80px 24px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 60,
-            minHeight: '90vh',
-          }}
-          className="hero-grid"
-        >
-          {/* Left */}
-          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} style={{ flex: 1 }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '6px 16px',
-                borderRadius: 999,
-                background: 'rgba(0,229,255,0.08)',
-                border: '1px solid rgba(0,229,255,0.25)',
-                marginBottom: 24,
-              }}
-            >
-              <Zap size={13} color="#00e5ff" fill="#00e5ff" />
-              <span style={{ fontSize: 12, fontWeight: 800, color: '#00e5ff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>AI-Chatbot</span>
-            </div>
-
-            <h1 style={{ fontSize: 'clamp(40px, 6vw, 68px)', fontWeight: 900, lineHeight: 1.1, marginBottom: 20, letterSpacing: '-1px' }}>
-              Book Rides
-              <br />
-              <span className="gradient-text">Faster &amp; Smarter</span>
-            </h1>
-
-            <p style={{ fontSize: 17, color: '#94a3b8', lineHeight: 1.7, maxWidth: 480, marginBottom: 36 }}>
-              The smarter way to get around. Fast matching, live tracking, and safe rides — all in one place.
-            </p>
-
-            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-              <button className="neon-btn" onClick={() => navigate('/register')}>
-                Book Ride <ArrowRight size={16} />
-              </button>
-              <button className="ghost-btn" onClick={() => navigate('/register')}>
-                Join as Driver
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Right — Map Mock */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            style={{ flex: 1, maxWidth: 420, width: '100%' }}
-            className="float-anim"
-          >
-            <div className="glass-card" style={{ padding: 16 }}>
-              <div className="map-mock">
-                <div className="map-grid" />
-                <div className="map-road-h" style={{ top: '35%' }} />
-                <div className="map-road-h" style={{ top: '65%' }} />
-                <div className="map-road-v" style={{ left: '30%' }} />
-                <div className="map-road-v" style={{ left: '70%' }} />
-
-                <div style={{ position: 'absolute', top: '33%', left: '28%' }}>
-                  <div className="pulse-ring" />
-                  <div className="pulse-pin" style={{ background: '#22c55e', boxShadow: '0 0 15px rgba(34,197,94,0.8)' }} />
-                </div>
-                <div style={{ position: 'absolute', top: '55%', left: '62%' }}>
-                  <div className="pulse-ring" style={{ borderColor: 'rgba(0,229,255,0.5)' }} />
-                  <div className="pulse-pin" />
-                </div>
-
-                <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-                  <line x1="30%" y1="35%" x2="65%" y2="57%" stroke="rgba(0,229,255,0.4)" strokeWidth="2" strokeDasharray="6,4" />
-                </svg>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '16px 12px',
-                  marginTop: 12,
-                  background: 'rgba(0,229,255,0.05)',
-                  borderRadius: 12,
-                  border: '1px solid rgba(0,229,255,0.12)',
-                  gap: 16,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 10,
-                      background: 'linear-gradient(135deg,#00e5ff,#2979ff)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 900,
-                      fontSize: 16,
-                      color: '#000',
-                      flexShrink: 0,
-                    }}
-                  >
-                    DT
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 12, color: '#00e5ff', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Driver Arriving</p>
-                    <p style={{ fontWeight: 800, color: '#e2e8f0' }}>Divy Thakkar · Honda City</p>
-                    <p style={{ fontSize: 12, color: '#64748b' }}>4.98 ★ · GJ05 AC 1234</p>
-                  </div>
-                </div>
-
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>ETA</p>
-                  <p style={{ fontSize: 24, fontWeight: 900, color: '#00e5ff' }}>3 MIN</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+      <section className="cz-hero" id="hero">
+        <div className="cz-hero-grid"/>
+        <div className="cz-orb cz-orb-1"/>
+        <div className="cz-orb cz-orb-2"/>
+        <div className="cz-shape-ring"/>
+        <div className="cz-shape-ring-2"/>
+        <div className="cz-hero-left">
+          <div className="cz-hero-tag">🚕 Your Ride, Your Way</div>
+          <h1 className="cz-hero-title">
+            <span className="line"><span>YOUR RIDE</span></span>
+            <span className="line"><span className="cz-stroke-word">ANYWHERE</span>&nbsp;<span className="cz-accent-word">NOW</span></span>
+            <span className="line"><span>WITH CABZEE</span></span>
+          </h1>
+          <p className="cz-hero-sub">Fast, safe & affordable rides at your fingertips. Book in seconds, track in real-time, arrive in comfort — every time across Gujarat & beyond.</p>
+          <div className="cz-hero-actions">
+            <button onClick={() => navigate('/register')} className="cz-btn-primary">Book a Ride Now →</button>
+            <button onClick={() => navigate('/register')} className="cz-btn-ghost">🚗 Become a Driver</button>
+          </div>
         </div>
-      </div>
+        <div className="cz-hero-right">
+          <div className="cz-hero-map-card">
+            <div className="cz-map-canvas">
+              <svg className="cz-map-grid-svg" xmlns="http://www.w3.org/2000/svg">
+                <defs><pattern id="mg" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M 28 0 L 0 0 0 28" fill="none" stroke="var(--grid-line)" strokeWidth=".8"/></pattern></defs>
+                <rect width="100%" height="100%" fill="url(#mg)"/>
+                <line x1="27%" y1="37%" x2="68%" y2="64%" stroke="rgba(0,212,168,0.3)" strokeWidth="1.5" strokeDasharray="5,4"/>
+              </svg>
+              <div className="cz-map-road-h" style={{top:'36%',height:'13px'}}/>
+              <div className="cz-map-road-h" style={{top:'63%',height:'13px'}}/>
+              <div className="cz-map-road-v" style={{left:'26%',width:'13px'}}/>
+              <div className="cz-map-road-v" style={{left:'66%',width:'13px'}}/>
+              <div className="cz-map-pickup">
+                <div className="cz-map-ring r-g2"/>
+                <div className="cz-map-ring r-g1"/>
+                <div className="cz-map-pickup-dot"/>
+              </div>
+              <div className="cz-map-drop">
+                <div className="cz-map-ring r-t2"/>
+                <div className="cz-map-ring r-t1"/>
+                <div className="cz-map-drop-dot"/>
+              </div>
+              <div className="cz-map-taxi">🚕</div>
+            </div>
+            <div className="cz-driver-arriving-card">
+              <div className="cz-driver-avatar-box">DT</div>
+              <div className="cz-driver-arriving-info">
+                <div className="cz-driver-arriving-label">Driver Arriving</div>
+                <div className="cz-driver-arriving-name">Divy Thakkar · Honda City</div>
+                <div className="cz-driver-arriving-sub">4.98 ★ &nbsp;·&nbsp; GJ05 AC 1234</div>
+              </div>
+              <div className="cz-driver-eta">
+                <div className="cz-driver-eta-label">ETA</div>
+                <div className="cz-driver-eta-val">3 MIN</div>
+              </div>
+            </div>
+          </div>
+          <div className="cz-hero-fare-row">
+            <div className="cz-fare-info">
+              <div className="cz-fare-label">Estimated Fare</div>
+              <div className="cz-fare-val">₹249</div>
+            </div>
+            <button onClick={() => navigate('/register')} className="cz-fare-book">Book Now →</button>
+          </div>
+        </div>
+        <div className="cz-hero-scroll"><div className="cz-scroll-line"/><span>SCROLL</span></div>
+      </section>
 
-      {/* STATS */}
-      <div style={{ background: 'rgba(0,229,255,0.02)', borderTop: '1px solid rgba(0,255,255,0.06)', borderBottom: '1px solid rgba(0,255,255,0.06)', padding: '60px 24px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 20 }} className="stats-grid">
-          {stats.map((s, i) => (
-            <motion.div
-              key={s.label}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="stat-card"
-            >
-              <p style={{ fontSize: 30, fontWeight: 900, color: '#00e5ff', marginBottom: 8 }}>{s.num}</p>
-              <p style={{ fontSize: 13, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{s.label}</p>
-            </motion.div>
+      {/* CAR STRIP */}
+      <CarStrip/>
+
+      {/* MARQUEE */}
+      <section className="cz-marquee-section">
+        <div className="cz-marquee-track">
+          {marqueeItems.map((item, i) => (
+            <div key={i} className="cz-marquee-item">{item} <span className="cz-marquee-dot">·</span></div>
           ))}
         </div>
-      </div>
-
-      {/* FEATURES */}
-      <div id="features" className="section">
-        <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <p style={{ fontSize: 12, letterSpacing: '0.3em', color: '#00e5ff', fontWeight: 900, textTransform: 'uppercase', marginBottom: 12 }}>Features</p>
-          <h2 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-1px' }}>
-            Everything You Need,
-            <br />
-            Nothing You Don&apos;t
-          </h2>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }} className="features-grid">
-          {features.map((f, i) => {
-            const Icon = f.icon;
-            return (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="feature-card"
-              >
-                <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(0,229,255,0.10)', border: '1px solid rgba(0,229,255,0.20)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                  <Icon size={18} color="#00e5ff" />
-                </div>
-                <p style={{ fontSize: 16, fontWeight: 900, marginBottom: 10 }}>{f.title}</p>
-                <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.7 }}>{f.desc}</p>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
+      </section>
 
       {/* HOW IT WORKS */}
-      <div id="how-it-works" style={{ background: 'rgba(0,229,255,0.02)', borderTop: '1px solid rgba(0,255,255,0.06)', borderBottom: '1px solid rgba(0,255,255,0.06)' }}>
-        <div className="section" style={{ paddingTop: 90, paddingBottom: 90 }}>
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <p style={{ fontSize: 12, letterSpacing: '0.3em', color: '#00e5ff', fontWeight: 900, textTransform: 'uppercase', marginBottom: 12 }}>Simple</p>
-            <h2 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-1px' }}>Three Steps. That&apos;s It.</h2>
-          </div>
+      <section className="cz-how" id="how">
+        <div className="cz-section-header">
+          <div><div className="cz-section-label">Simple As 1-2-3</div><div className="cz-section-title">HOW IT<br/>WORKS</div></div>
+          <p className="cz-section-desc">From tap to destination — the smoothest ride experience you've ever had.</p>
+        </div>
+        <div className="cz-steps-row">
+          {STEPS.map((s, i) => (
+            <div key={i} className="cz-step">
+              <div className="cz-step-num">{s.icon}</div>
+              <div className="cz-step-title">{s.title}</div>
+              <p className="cz-step-text">{s.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }} className="steps-grid">
-            {steps.map((s, i) => (
-              <motion.div
-                key={s.n}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12 }}
-                style={{
-                  display: 'flex',
-                  gap: 18,
-                  padding: 28,
-                  borderRadius: 18,
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(0,255,255,0.10)',
-                }}
-              >
-                <div className="step-num">{s.n}</div>
-                <div style={{ paddingTop: 2 }}>
-                  <p style={{ fontWeight: 900, fontSize: 18, marginBottom: 8 }}>{s.title}</p>
-                  <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.7 }}>{s.desc}</p>
+      {/* FEATURES */}
+      <section className="cz-features" id="features">
+        <div className="cz-section-header">
+          <div><div className="cz-section-label">Why CabZee</div><div className="cz-section-title">CORE<br/>FEATURES</div></div>
+          <p className="cz-section-desc">Every feature designed for a safer, smarter, smoother journey.</p>
+        </div>
+        <div className="cz-features-grid">
+          {FEATURES.map((f, i) => (
+            <div key={i} className="cz-feature-card">
+              <div className="cz-feature-icon">{f.icon}</div>
+              <div className="cz-feature-name">{f.name}</div>
+              <p className="cz-feature-text">{f.text}</p>
+              <div className="cz-feature-num">{f.num}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* STATS */}
+      <section className="cz-stats" id="stats" ref={statsRef}>
+        {STATS.map((s, i) => <StatBlock key={i} {...s} active={statsActive}/>)}
+      </section>
+
+      {/* APP SECTION */}
+      <section className="cz-app-section" id="app">
+        <div className="cz-app-content">
+          <div className="cz-section-label">Available Now</div>
+          <div className="cz-app-title">RIDE SMARTER<br/>WITH THE<br/><span>CABZEE APP</span></div>
+          <p className="cz-app-desc">Download the CabZee app and get your first 3 rides with 20% off. The fastest way to get around Gujarat — in the palm of your hand.</p>
+          <div className="cz-store-buttons">
+            <button key="apple" onClick={() => navigate('/register')} className="cz-store-btn" style={{ background: 'var(--surface)', border: '1px solid var(--border2)', cursor: 'pointer' }}>
+              <div className="cz-store-btn-icon">🍎</div>
+              <div className="cz-store-btn-text"><span className="cz-store-btn-sub">Download on the</span><span className="cz-store-btn-name">App Store</span></div>
+            </button>
+            <button key="google" onClick={() => navigate('/register')} className="cz-store-btn" style={{ background: 'var(--surface)', border: '1px solid var(--border2)', cursor: 'pointer' }}>
+              <div className="cz-store-btn-icon">🤖</div>
+              <div className="cz-store-btn-text"><span className="cz-store-btn-sub">Get it on</span><span className="cz-store-btn-name">Google Play</span></div>
+            </button>
+          </div>
+        </div>
+        <div className="cz-app-mockup">
+          <div className="cz-phone-frame">
+            <div className="cz-phone-notch"/>
+            <div className="cz-phone-screen">
+              <div className="cz-phone-map">
+                <svg className="cz-phone-map-grid-svg" xmlns="http://www.w3.org/2000/svg">
+                  <defs><pattern id="pg" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M 22 0 L 0 0 0 22" fill="none" stroke="var(--grid-line)" strokeWidth=".8"/></pattern></defs>
+                  <rect width="100%" height="100%" fill="url(#pg)"/>
+                </svg>
+                <div className="cz-phone-road-h" style={{top:'40%',height:'9px'}}/>
+                <div className="cz-phone-road-h" style={{top:'66%',height:'9px'}}/>
+                <div className="cz-phone-road-v" style={{left:'33%',width:'9px'}}/>
+                <div className="cz-phone-road-v" style={{left:'64%',width:'9px'}}/>
+                <div className="cz-phone-taxi-wrap">
+                  <div className="cz-phone-ring-ping"/>
+                  <div className="cz-phone-ring-dash"/>
+                  <div className="cz-phone-ring-solid"/>
+                  <span className="cz-phone-taxi-emoji">🚕</span>
                 </div>
-              </motion.div>
+              </div>
+              <div className="cz-phone-driver-card">
+                <div className="cz-ph-avatar">DT</div>
+                <div className="cz-ph-info">
+                  <div className="cz-ph-label">Driver Arriving</div>
+                  <div className="cz-ph-name">Divy Thakkar · Honda City</div>
+                  <div className="cz-ph-sub">4.98 ★ · GJ05 AC 1234</div>
+                </div>
+                <div className="cz-ph-eta"><div className="cz-ph-eta-lbl">ETA</div><div className="cz-ph-eta-val">3 MIN</div></div>
+              </div>
+              <div className="cz-phone-fare-row">
+                <div><div className="cz-ph-fare-lbl">Estimated Fare</div><div className="cz-ph-fare-val">₹249</div></div>
+                <button onClick={() => navigate('/register')} className="cz-ph-book">Book Now →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DRIVER SECTION */}
+      <section className="cz-driver-section" id="drive">
+        <div className="cz-driver-visual">
+          <div className="cz-driver-card">
+            <div className="cz-driver-avatar-big">👨✈️</div>
+            <div className="cz-driver-name-big">Divy Thakkar</div>
+            <div className="cz-driver-sub-big">CabZee Driver · Honda City · 3 Years</div>
+            <div className="cz-driver-plate">GJ05 AC 1234</div>
+            <div className="cz-driver-stats-grid">
+              {[["4.98","Rating"],["2,400","Trips Done"],["₹82K","Earned / Mo"],["98%","On Time"]].map(([v,l],i) => (
+                <div key={i} className="cz-driver-stat"><div className="cz-driver-stat-val">{v}</div><div className="cz-driver-stat-lbl">{l}</div></div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="cz-driver-content">
+          <div className="cz-section-label">Drive with CabZee</div>
+          <div className="cz-app-title">EARN MORE.<br/>DRIVE ON YOUR<br/><span>TERMS.</span></div>
+          <div className="cz-driver-perks">
+            {[["💸","Weekly Payouts","Earn consistently with weekly direct payouts and performance bonuses."],["🕐","Flexible Hours","Drive when you want. No fixed schedules — be your own boss."],["🎓","Free Onboarding","Free training and safety certification to help you succeed from day one."]].map(([icon,h4,p],i) => (
+              <div key={i} className="cz-driver-perk">
+                <div className="cz-perk-icon">{icon}</div>
+                <div className="cz-perk-text"><h4>{h4}</h4><p>{p}</p></div>
+              </div>
             ))}
           </div>
+          <button onClick={() => navigate('/register')} className="cz-btn-primary">Register as Driver →</button>
         </div>
-      </div>
-
-      {/* TRACKING */}
-      <div id="tracking" className="section">
-        <div style={{ display: 'flex', gap: 60, alignItems: 'center' }} className="tracking-grid">
-          <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ flex: 1 }}>
-            <p style={{ fontSize: 12, letterSpacing: '0.3em', color: '#00e5ff', fontWeight: 900, textTransform: 'uppercase', marginBottom: 12 }}>Live</p>
-            <h2 style={{ fontSize: 44, fontWeight: 900, letterSpacing: '-1px', lineHeight: 1.1, marginBottom: 14 }}>
-              Watch Your Ride,
-              <br />
-              Every Second
-            </h2>
-            <p style={{ fontSize: 15, color: '#94a3b8', lineHeight: 1.7, maxWidth: 520, marginBottom: 26 }}>
-              Real-time updates, every 2 seconds. You&apos;ll always know exactly where your driver is.
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {trackingPoints.map((p) => {
-                const Icon = p.icon;
-                return (
-                  <div key={p.title} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                    <div style={{ width: 30, height: 30, borderRadius: 10, background: 'rgba(0,229,255,0.10)', border: '1px solid rgba(0,229,255,0.20)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon size={16} color="#00e5ff" />
-                    </div>
-                    <div>
-                      <p style={{ fontWeight: 900, fontSize: 14 }}>{p.title}</p>
-                      <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.7 }}>{p.desc}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div style={{ marginTop: 28 }}>
-              <button className="ghost-btn" onClick={() => navigate('/register')} style={{ padding: '12px 18px', fontSize: 14, gap: 8 }}>
-                Start tracking <ChevronRight size={16} />
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} style={{ flex: 1, maxWidth: 520 }}>
-            <div className="glass-card" style={{ padding: 18 }}>
-              <div className="map-mock" style={{ height: 360 }}>
-                <div className="map-grid" />
-                <div className="map-road-h" style={{ top: '42%' }} />
-                <div className="map-road-h" style={{ top: '70%' }} />
-                <div className="map-road-v" style={{ left: '45%' }} />
-                <div className="map-road-v" style={{ left: '76%' }} />
-                <div style={{ position: 'absolute', top: '40%', left: '42%' }}>
-                  <div className="pulse-ring" />
-                  <div className="pulse-pin" />
-                </div>
-                <div style={{ position: 'absolute', top: '67%', left: '73%' }}>
-                  <div className="pulse-ring" style={{ borderColor: 'rgba(34,197,94,0.55)' }} />
-                  <div className="pulse-pin" style={{ background: '#22c55e', boxShadow: '0 0 15px rgba(34,197,94,0.8)' }} />
-                </div>
-                <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-                  <line x1="45%" y1="42%" x2="76%" y2="70%" stroke="rgba(0,229,255,0.35)" strokeWidth="2" strokeDasharray="6,4" />
-                </svg>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginTop: 12 }}>
-                {[
-                  { icon: Clock, label: 'ETA', value: '2:48' },
-                  { icon: Users, label: 'Driver', value: '4.98★' },
-                  { icon: ShieldCheck, label: 'Safety', value: 'OTP' },
-                ].map((k) => {
-                  const Icon = k.icon;
-                  return (
-                    <div key={k.label} style={{ borderRadius: 14, border: '1px solid rgba(0,255,255,0.10)', background: 'rgba(255,255,255,0.03)', padding: 14 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                        <Icon size={14} color="#00e5ff" />
-                        <p style={{ fontSize: 12, color: '#64748b', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{k.label}</p>
-                      </div>
-                      <p style={{ fontSize: 16, fontWeight: 900, color: '#e2e8f0' }}>{k.value}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      </section>
 
       {/* TESTIMONIALS */}
-      <div id="testimonials" style={{ background: 'rgba(0,229,255,0.02)', borderTop: '1px solid rgba(0,255,255,0.06)' }}>
-        <div className="section" style={{ paddingTop: 90, paddingBottom: 90 }}>
-          <div style={{ textAlign: 'center', marginBottom: 60 }}>
-            <p style={{ fontSize: 12, letterSpacing: '0.3em', color: '#00e5ff', fontWeight: 900, textTransform: 'uppercase', marginBottom: 12 }}>Reviews</p>
-            <h2 style={{ fontSize: 40, fontWeight: 900, letterSpacing: '-1px' }}>Loved by Riders</h2>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }} className="testimonials-grid">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12 }}
-                className="testimonial-card"
-              >
-                <div style={{ display: 'flex', gap: 2, marginBottom: 16 }}>
-                  {[...Array(5)].map((_, s) => (
-                    <Star key={s} size={14} color="#fbbf24" fill="#fbbf24" />
-                  ))}
-                </div>
-                <p style={{ fontSize: 15, color: '#94a3b8', lineHeight: 1.7, marginBottom: 24, fontStyle: 'italic' }}>
-                  &quot;{t.review}&quot;
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: '50%',
-                      background: 'rgba(0,229,255,0.12)',
-                      border: '1px solid rgba(0,229,255,0.2)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 900,
-                      color: '#00e5ff',
-                      fontSize: 16,
-                    }}
-                  >
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <p style={{ fontWeight: 900, color: '#e2e8f0', fontSize: 14 }}>{t.name}</p>
-                    <p style={{ fontSize: 12, color: '#64748b' }}>{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      <section className="cz-testimonials" id="testimonials">
+        <div className="cz-section-header" style={{marginBottom:'56px'}}>
+          <div><div className="cz-section-label">What Riders Say</div><div className="cz-section-title">LOVED BY<br/>THOUSANDS</div></div>
+          <p className="cz-section-desc">Real experiences from real CabZee riders across Gujarat.</p>
         </div>
-      </div>
+        <div className="cz-testimonials-grid">
+          {TESTIMONIALS.map((t, i) => (
+            <div key={i} className="cz-testimonial-card">
+              <div className="cz-testimonial-stars">★★★★★</div>
+              <p className="cz-testimonial-text">{t.text}</p>
+              <div className="cz-testimonial-author">
+                <div className="cz-author-avatar">{t.avatar}</div>
+                <div><div className="cz-author-name">{t.name}</div><div className="cz-author-sub">{t.sub}</div></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="cz-cta-section" id="cta">
+        <div className="cz-cta-bg"/>
+        <div className="cz-cta-title">YOUR NEXT RIDE<br/>IS <span>ONE TAP</span> AWAY</div>
+        <p className="cz-cta-sub">Join 500,000+ riders already cruising smarter with CabZee across Gujarat.</p>
+        <div className="cz-cta-buttons">
+          <button onClick={() => navigate('/register')} className="cz-btn-primary" style={{fontSize:'15px',padding:'17px 44px'}}>Book a Ride Now →</button>
+          <button onClick={() => navigate('/register')} className="cz-btn-ghost" style={{fontSize:'15px',padding:'17px 44px'}}>Become a Driver</button>
+        </div>
+      </section>
 
       {/* FOOTER */}
-      <footer style={{ borderTop: '1px solid rgba(0,255,255,0.08)', padding: '60px 24px 40px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'flex', gap: 60, marginBottom: 60 }} className="footer-cols">
-            <div style={{ flex: 2 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg,#00e5ff,#2979ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 12, color: '#000' }}>
-                  CZ
-                </div>
-                <span style={{ fontWeight: 900, fontSize: 18 }}>CabZee</span>
-              </div>
-              <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7, maxWidth: 280 }}>
-                The smarter, faster, safer way to ride. Built for the modern commuter.
-              </p>
+      <footer className="cz-footer">
+        <div className="cz-footer-top">
+          <div>
+            <div className="cz-logo" style={{fontSize:'24px',marginBottom:'12px',display:'inline-flex'}}>🚕 CABZEE</div>
+            <p className="cz-footer-desc">Fast, safe & affordable rides wherever you go. Available 24/7 across 100+ cities in Gujarat and India.</p>
+          </div>
+          {[["Riders",["Book a Ride","CabZee Rewards","Safety Features","Ride Types"]],["Drivers",["Register to Drive","Driver App","Earnings","Training"]],["Company",["About Us","Careers","Blog","Contact"]]].map(([title, links]) => (
+            <div key={title}>
+              <div className="cz-footer-col-title">{title}</div>
+              <ul className="cz-footer-links">
+                {links.map(l => <li key={l}><a href="#">{l}</a></li>)}
+              </ul>
             </div>
-
-            {[
-              { title: 'Product', links: ['Features', 'Pricing', 'Safety', 'Download'] },
-              { title: 'Company', links: ['About', 'Careers', 'Blog', 'Press'] },
-              { title: 'Support', links: ['Help Center', 'Contact', 'Privacy', 'Terms'] },
-            ].map((col) => (
-              <div key={col.title} style={{ flex: 1 }}>
-                <p style={{ fontWeight: 900, fontSize: 13, color: '#e2e8f0', marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{col.title}</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {col.links.map((l) => (
-                    <a key={l} href="#" className="nav-link" style={{ fontSize: 14 }}>
-                      {l}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))}
+          ))}
+        </div>
+        <div className="cz-footer-bottom">
+          <span>© 2026 CabZee. All rights reserved.</span>
+          <div className="cz-footer-social">
+            {['𝕏','in','📸'].map((s,i) => <a key={i} href="#" className="cz-social-btn" style={{ cursor: 'pointer' }}>{s}</a>)}
           </div>
-
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <p style={{ color: '#475569', fontSize: 13 }}>© 2026 CabZee. All rights reserved.</p>
-            <p style={{ color: '#475569', fontSize: 13 }}>Built for the future.</p>
-          </div>
+          <span>Made with 🚕 in Gujarat, India</span>
         </div>
       </footer>
     </div>

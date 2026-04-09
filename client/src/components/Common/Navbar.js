@@ -19,14 +19,14 @@ const Navbar = ({ toggleSidebar, user, title }) => {
   const profilePath = user?.role === 'driver' ? '/driver-profile' : '/user-profile';
 
   return (
-    <header className="h-16 fixed top-0 left-0 right-0 z-30 lg:pl-[220px] transition-all duration-300 bg-white/95 text-black border-b border-[#e5e5e5] shadow-sm backdrop-blur dark:bg-black/35 dark:text-white dark:border-white/10">
-      <div className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-purple-600/80 via-purple-600/20 to-transparent" />
+    <header className="h-16 fixed top-0 left-0 right-0 z-30 lg:pl-[220px] transition-all duration-300 cz-glass border-b border-[var(--border)] shadow-sm backdrop-blur text-[var(--text)]">
+      <div className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-yellow-500/80 via-yellow-500/20 to-transparent" />
 
       <div className="h-full px-4 sm:px-6 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <button
             onClick={toggleSidebar}
-            className="lg:hidden p-2 rounded-xl transition-all duration-300 text-black hover:bg-black/5 active:scale-95 dark:text-white dark:hover:bg-white/10"
+            className="lg:hidden p-2 rounded-xl transition-all duration-300 text-[var(--text)] hover:bg-white/5 active:scale-95"
             aria-label="Open sidebar"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -35,10 +35,12 @@ const Navbar = ({ toggleSidebar, user, title }) => {
           </button>
 
           <div className="hidden sm:block min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] leading-none text-black dark:text-purple-300">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] leading-none text-yellow-600 dark:text-yellow-500/80">
               {roleLabel}
             </p>
-            <h1 className="text-base font-bold leading-snug mt-0.5 truncate">{title || 'Dashboard'}</h1>
+            <h1 className="text-xl cz-bebas tracking-wider leading-snug mt-0.5 truncate text-[var(--text)]">
+              {title || 'Dashboard'}
+            </h1>
           </div>
         </div>
 
