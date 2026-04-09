@@ -117,7 +117,7 @@ const EditDriverProfile = () => {
                 <div className="flex items-center gap-6">
                     <button
                         onClick={() => navigate('/driver-profile')}
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400 dark:hover:bg-[rgba(255,255,255,0.10)]"
                     >
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -131,15 +131,15 @@ const EditDriverProfile = () => {
             </header>
 
             <main className="max-w-2xl">
-                <div className="rounded-[3.5rem] border border-gray-100 bg-white p-10 shadow-sm dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
-                    <div className="mb-12 border-b border-gray-50 pb-10 dark:border-white/5">
+                <div className="rounded-[3.5rem] border border-gray-100 bg-white p-10 shadow-sm dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl">
+                    <div className="mb-12 border-b border-gray-50 pb-10 dark:border-[rgba(255,255,255,0.05)]">
                          <h3 className="text-xl font-bold text-gray-900 dark:text-white lowercase">Bio & Verification</h3>
                          <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 leading-relaxed">Update your operational name and contact protocols for the network registry.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-10">
                         {/* Avatar */}
-                        <div className="flex flex-col items-center gap-6 py-6 rounded-[2rem] bg-gray-50/50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10">
+                        <div className="flex flex-col items-center gap-6 py-6 rounded-[2rem] bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border border-dashed border-gray-200 dark:border-[rgba(255,255,255,0.10)]">
                             <div className="group relative h-24 w-24">
                                 <div className="h-full w-full overflow-hidden rounded-[1.5rem] border-4 border-white bg-black shadow-xl dark:border-neutral-800">
                                     {preview ? (
@@ -154,7 +154,7 @@ const EditDriverProfile = () => {
                                         </div>
                                     )}
                                 </div>
-                                <label className="absolute -bottom-2 -right-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl bg-black text-white shadow-lg hover:scale-110 transition-all dark:bg-[#FFD000] dark:text-black">
+                                <label className="absolute -bottom-2 -right-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl bg-black force-light-text shadow-lg hover:scale-110 transition-all dark:bg-[#FFD000] dark:text-black">
                                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                     </svg>
@@ -196,14 +196,14 @@ const EditDriverProfile = () => {
                             <button
                                 type="submit"
                                 disabled={updating}
-                                className="flex-1 rounded-2xl bg-black py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 dark:bg-[#FFD000] dark:text-black"
+                                className="flex-1 rounded-2xl bg-black py-5 text-[10px] font-black uppercase tracking-[0.2em] force-light-text shadow-xl transition-all hover:scale-105 active:scale-95 disabled:opacity-50 dark:bg-[#FFD000] dark:text-black"
                             >
                                 {updating ? 'Syncing...' : 'Save Profile Changes'}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => navigate('/driver-profile')}
-                                className="rounded-2xl border border-gray-200 bg-white px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all dark:bg-white/5 dark:border-white/5"
+                                className="rounded-2xl border border-gray-200 bg-white px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.05)]"
                             >
                                 Cancel
                             </button>

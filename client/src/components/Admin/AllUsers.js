@@ -26,8 +26,11 @@ const AllUsers = () => {
                 if (data.success) {
                     setUsers(data.data);
                 } else {
-                    toast.error(data.message || 'Failed to fetch users');
-                    if (response.status === 401 || response.status === 403) navigate('/admin-login');
+                    if (response.status === 401 || response.status === 403) {
+                        navigate('/admin-login');
+                        return;
+                    }
+                    toast.error('Failed to fetch users');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -69,7 +72,7 @@ const AllUsers = () => {
                     </div>
                     <div className="h-8 w-px bg-gray-100 dark:bg-white/10" />
                     <div className="rounded-xl bg-black px-4 py-2 dark:bg-[#FFD000]">
-                         <span className="text-[10px] font-black uppercase tracking-widest text-white dark:text-black">Master Access</span>
+                         <span className="text-[10px] font-black uppercase tracking-widest force-light-text dark:text-black">Master Access</span>
                     </div>
                 </div>
             </header>

@@ -42,8 +42,11 @@ const SystemSettings = () => {
             if (data.success) {
                 setSettings(data.data);
             } else {
-                toast.error(data.message || 'Failed to fetch settings');
-                if (response.status === 401 || response.status === 403) navigate('/admin-login');
+                if (response.status === 401 || response.status === 403) {
+                    navigate('/admin-login');
+                    return;
+                }
+                toast.error('Failed to fetch settings');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -157,11 +160,11 @@ const SystemSettings = () => {
                     </div>
 
                     {/* Revenue & Commission */}
-                    <div className="rounded-[4rem] bg-black p-12 text-white shadow-2xl shadow-black/20 dark:bg-[#111]">
-                        <h3 className="text-2xl font-bold tracking-tight text-[#FFD000] lowercase mb-12">Revenue Distribution</h3>
-                        
-                        <div className="rounded-[2.5rem] bg-white/5 p-8 border border-white/5 mb-10 shadow-inner">
-                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">Driver Commission Ratio</p>
+                    <div className="rounded-[4rem] bg-black p-12 force-light-text shadow-2xl shadow-black/20 dark:bg-[#111]">
+                        <h3 className="text-2xl font-bold tracking-tight text-[#FFD000] uppercase mb-12">Revenue Distribution</h3>
+
+                        <div className="rounded-[2.5rem] bg-neutral-900 p-8 border border-neutral-800 mb-10 shadow-inner">
+                            <p className="text-1xl font-black text-[#FFD000] uppercase tracking-widest mb-6">Driver Commission Ratio</p>
                             <div className="flex items-center gap-10">
                                 <div className="text-6xl font-black text-[#FFD000] tracking-tighter italic">{settings.driverCommissionPercentage}<span className="text-2xl ml-1">%</span></div>
                                 <input
@@ -171,31 +174,31 @@ const SystemSettings = () => {
                                     onChange={handleInputChange}
                                     min="0"
                                     max="100"
-                                    className="h-2 flex-1 appearance-none rounded-full bg-white/10 accent-[#FFD000]"
+                                    className="h-2 flex-1 appearance-none rounded-full bg-neutral-800 accent-[#FFD000]"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-6">
-                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Notifications Gateways</p>
-                            <label className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-6 cursor-pointer hover:bg-white/10 transition-all">
+                            <p className="text-1xl font-black text-[#FFD000] uppercase tracking-widest ml-1">Notifications Gateways</p>
+                            <label className="flex items-center justify-between rounded-2xl border border-neutral-800 bg-neutral-900 p-6 cursor-pointer hover:bg-neutral-800 transition-all">
                                 <span className="text-sm font-bold">Email Notifications</span>
                                 <input
                                     type="checkbox"
                                     name="enableEmailNotifications"
                                     checked={settings.enableEmailNotifications}
                                     onChange={handleInputChange}
-                                    className="h-6 w-11 appearance-none rounded-full bg-white/10 transition-all checked:bg-[#FFD000] cursor-pointer"
+                                    className="h-6 w-11 appearance-none rounded-full bg-neutral-800 transition-all checked:bg-[#FFD000] cursor-pointer"
                                 />
                             </label>
-                            <label className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-6 cursor-pointer hover:bg-white/10 transition-all">
+                            <label className="flex items-center justify-between rounded-2xl border border-neutral-800 bg-neutral-900 p-6 cursor-pointer hover:bg-neutral-800 transition-all">
                                 <span className="text-sm font-bold">SMS Base Gateway</span>
                                 <input
                                     type="checkbox"
                                     name="enableSmsNotifications"
                                     checked={settings.enableSmsNotifications}
                                     onChange={handleInputChange}
-                                    className="h-6 w-11 appearance-none rounded-full bg-white/10 transition-all checked:bg-[#FFD000] cursor-pointer"
+                                    className="h-6 w-11 appearance-none rounded-full bg-neutral-800 transition-all checked:bg-[#FFD000] cursor-pointer"
                                 />
                             </label>
                         </div>
@@ -233,17 +236,17 @@ const SystemSettings = () => {
 
                 <div className="flex justify-between items-center bg-gray-50 p-10 rounded-[3rem] dark:bg-white/5">
                     <div className="flex items-center gap-6">
-                         <div className="h-12 w-12 rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300 dark:border-white/10">
+                        <div className="h-12 w-12 rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300 dark:border-white/10">
                             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                         </div>
-                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest max-w-[200px]">Changes applied globally and in real-time across the platform.</p>
+                        </div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest max-w-[200px]">Changes applied globally and in real-time across the platform.</p>
                     </div>
                     <button
                         type="submit"
                         disabled={saving}
-                        className="rounded-3xl bg-black px-16 py-6 text-xs font-black uppercase tracking-[0.3em] text-white shadow-2xl transition-all hover:scale-105 active:scale-95 dark:bg-[#FFD000] dark:text-black"
+                        className="rounded-3xl bg-black px-16 py-6 text-xs font-black uppercase tracking-[0.3em] force-light-text shadow-2xl transition-all hover:scale-105 active:scale-95 dark:bg-[#FFD000] dark:text-black"
                     >
                         {saving ? (
                             <span className="flex items-center gap-4">

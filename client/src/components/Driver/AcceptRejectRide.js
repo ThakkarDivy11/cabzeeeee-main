@@ -105,7 +105,7 @@ const AcceptRejectRide = () => {
             <div className="flex items-center gap-6">
                 <button
                     onClick={() => navigate('/incoming-ride-request')}
-                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400 dark:hover:bg-[rgba(255,255,255,0.10)]"
                 >
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -124,7 +124,7 @@ const AcceptRejectRide = () => {
 
         <div className="grid flex-1 grid-cols-1 lg:grid-cols-12 gap-8 overflow-hidden">
             {/* Map Container */}
-            <div className="lg:col-span-7 h-[400px] lg:h-full rounded-[3rem] overflow-hidden border border-gray-200 shadow-xl dark:border-white/5 relative group">
+            <div className="lg:col-span-7 h-[400px] lg:h-full rounded-[3rem] overflow-hidden border border-gray-200 shadow-xl dark:border-[rgba(255,255,255,0.05)] relative group">
                 <MapContainer center={mapCenter} zoom={14} className="h-full w-full">
                   {pLat && pLon && <UserMarker position={[pLat, pLon]} popupContent="Pickup" />}
                   {dLat && dLon && <UserMarker position={[dLat, dLon]} popupContent="Drop" />}
@@ -147,8 +147,8 @@ const AcceptRejectRide = () => {
 
             {/* Content Container */}
             <div className="lg:col-span-5 flex flex-col gap-8 h-full overflow-y-auto">
-                <div className="rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl h-full flex flex-col">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-10 dark:border-white/5">
+                <div className="rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl h-full flex flex-col">
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-10 dark:border-[rgba(255,255,255,0.05)]">
                         <div className="flex items-center gap-6">
                             <div className="h-20 w-20 rounded-[1.8rem] bg-[#FFD000] flex items-center justify-center text-3xl font-black text-black shadow-xl ring-4 ring-white dark:ring-neutral-800">
                                 {rideRequest.rider.name.charAt(0)}
@@ -156,7 +156,7 @@ const AcceptRejectRide = () => {
                             <div>
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Rider Information</p>
                                 <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{rideRequest.rider.name}</h3>
-                                <div className="mt-2 flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                                <div className="mt-2 flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                                     <span className="text-yellow-500">★</span>
                                     <span className="text-xs font-bold text-gray-600 dark:text-gray-400">{rideRequest.rider.rating || '5.0'} Merit</span>
                                 </div>
@@ -171,21 +171,21 @@ const AcceptRejectRide = () => {
                     <div className="flex-1 py-10 space-y-10">
                         <div className="flex gap-8 group">
                             <div className="mt-2 h-4 w-4 shrink-0 rounded-full bg-emerald-500 ring-4 ring-emerald-500/10" />
-                            <div className="relative border-l border-dashed border-gray-200 pl-8 dark:border-white/10">
+                            <div className="relative border-l border-dashed border-gray-200 pl-8 dark:border-[rgba(255,255,255,0.10)]">
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-2">Pickup Location</p>
                                 <p className="text-lg font-bold text-gray-900 dark:text-white leading-relaxed">{rideRequest.pickupLocation?.address || 'Restricted Area'}</p>
                             </div>
                         </div>
                         <div className="flex gap-8 group">
                             <div className="mt-2 h-4 w-4 shrink-0 rounded-full bg-red-500 ring-4 ring-red-500/10" />
-                            <div className="relative border-l border-dashed border-gray-200 pl-8 dark:border-white/10">
+                            <div className="relative border-l border-dashed border-gray-200 pl-8 dark:border-[rgba(255,255,255,0.10)]">
                                 <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-2">Drop Destination</p>
                                 <p className="text-lg font-bold text-gray-900 dark:text-white leading-relaxed">{rideRequest.dropLocation?.address || 'Target Area'}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 pt-10 border-t border-gray-100 dark:border-white/5">
+                    <div className="grid grid-cols-2 gap-6 pt-10 border-t border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                          <button
                             onClick={handleReject}
                             disabled={processing}

@@ -88,7 +88,7 @@ const DocumentUpload = () => {
                 <div className="flex items-center gap-6">
                     <button
                         onClick={() => navigate('/driver-profile')}
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400 dark:hover:bg-[rgba(255,255,255,0.10)]"
                     >
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -103,10 +103,10 @@ const DocumentUpload = () => {
 
             <div className="grid gap-10">
                 {docTypes.map(({ key, label, placeholder }) => (
-                    <div key={key} className="group relative rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm transition-all duration-500 hover:shadow-2xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 pb-10 border-b border-gray-100 dark:border-white/5">
+                    <div key={key} className="group relative rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm transition-all duration-500 hover:shadow-2xl dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 pb-10 border-b border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                             <div className="flex items-center gap-6">
-                                <div className="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 dark:bg-white/5 group-hover:bg-[#FFD000] group-hover:text-black transition-colors">
+                                <div className="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 dark:bg-[rgba(255,255,255,0.05)] group-hover:bg-[#FFD000] group-hover:text-black transition-colors">
                                     <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
@@ -124,7 +124,7 @@ const DocumentUpload = () => {
                                     href={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${user.documents?.[key]?.fileUrl}`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="rounded-xl bg-gray-50 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-gray-900 hover:bg-gray-100 transition-all dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                                    className="rounded-xl bg-gray-50 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-gray-900 hover:bg-gray-100 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-300 dark:hover:bg-[rgba(255,255,255,0.10)]"
                                 >
                                     Browse Current
                                 </a>
@@ -157,7 +157,7 @@ const DocumentUpload = () => {
                                 </div>
                             </div>
 
-                            <div className="relative rounded-3xl border-2 border-dashed border-gray-100 bg-gray-50 p-10 text-center dark:border-white/10 dark:bg-white/5">
+                            <div className="relative rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 p-10 text-center dark:border-[rgba(255,255,255,0.10)] dark:bg-[rgba(255,255,255,0.05)]">
                                 <input
                                     type="file"
                                     name="document"
@@ -177,7 +177,7 @@ const DocumentUpload = () => {
                                 <button
                                     type="submit"
                                     disabled={uploading}
-                                    className="rounded-2xl bg-black px-12 py-5 text-xs font-black uppercase tracking-widest text-white shadow-xl transition-all hover:bg-neutral-800 disabled:opacity-50 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
+                                    className="rounded-2xl bg-black px-12 py-5 text-xs font-black uppercase tracking-widest force-light-text shadow-xl transition-all hover:bg-neutral-800 disabled:opacity-50 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
                                 >
                                     {uploading ? (
                                         <span className="flex items-center gap-3">

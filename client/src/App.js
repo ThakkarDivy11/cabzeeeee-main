@@ -53,32 +53,53 @@ import Reports from './components/Admin/Reports';
 import ChatBot from './components/ChatBot/ChatBot';
 import MobileBottomNav from './components/Common/MobileBottomNav';
 import { fetchAdminCommissionSummary } from './services/paymentSplitService';
+import { icon } from 'leaflet';
 
 // Admin Login Component — Styled for Clean Premium
 const AdminLogin = () => {
+    const [email, setEmail] = useState('admin@cabzee.com');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    // Clear any stale session on mount — prevents old tokens from
+    // triggering background API calls that produce "Not authorized" toasts
+    useEffect(() => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    }, []);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Mock check — consistent with your previous admin setup
-        if (password === 'admin123') {
-            const mockUser = { name: 'Super Admin', role: 'admin', email: 'admin@cabzee.com' };
-            localStorage.setItem('token', 'mock-admin-token');
-            localStorage.setItem('user', JSON.stringify(mockUser));
-            toast.success('Access Granted');
-            navigate('/admin');
-        } else {
-            toast.error('Access Denied');
+        try {
+            const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000') + '/api/auth/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const payload = await response.json();
+
+            if (response.ok && payload.success && payload.data && payload.data.user) {
+                if (payload.data.user.role === 'admin') {
+                    localStorage.setItem('token', payload.data.token);
+                    localStorage.setItem('user', JSON.stringify(payload.data.user));
+                    toast.success('Access Granted');
+                    navigate('/admin');
+                } else {
+                    toast.error('Insufficient privileges');
+                }
+            } else {
+                toast.error(payload.message || 'Invalid access key');
+            }
+        } catch (err) {
+            toast.error('Connection to server failed');
         }
     };
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-[#06060a]">
-            {/* Grid background logic inherited from Layout.js via CSS if needed, or ad-hoc here */}
             <div className="cz-grid fixed inset-0 z-0 pointer-events-none opacity-20" />
-            
-            <div className="w-full max-w-md space-y-8 rounded-3xl border border-gray-200 bg-white p-10 shadow-xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl relative z-10">
+
+            <div className="w-full max-w-md space-y-8 rounded-3xl border border-gray-200 bg-white p-10 shadow-xl dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl relative z-10">
                 <div className="text-center">
                     <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFD000] text-black shadow-lg shadow-[#FFD000]/20">
                         <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -88,18 +109,32 @@ const AdminLogin = () => {
                     <h2 className="mt-6 text-3xl font-black tracking-tight text-gray-900 dark:text-white">Central Overlook</h2>
                     <p className="mt-2 text-sm font-medium text-gray-500 uppercase tracking-widest leading-none">Authorization Required</p>
                 </div>
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <input
-                        type="password"
-                        required
-                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 text-center text-lg font-bold tracking-[0.4em] outline-none focus:ring-2 focus:ring-[#FFD000]/20 dark:border-white/5 dark:bg-white/5"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+                    <div className="space-y-1">
+                        <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Admin Email</label>
+                        <input
+                            type="email"
+                            required
+                            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 text-sm font-bold text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-[#FFD000]/20 dark:border-[rgba(255,255,255,0.05)] dark:bg-[rgba(255,255,255,0.05)] dark:text-white"
+                            placeholder="admin@cabzee.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="ml-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Access Key</label>
+                        <input
+                            type="password"
+                            required
+                            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-5 py-4 text-center text-lg font-bold tracking-[0.4em] text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-[#FFD000]/20 dark:border-[rgba(255,255,255,0.05)] dark:bg-[rgba(255,255,255,0.05)] dark:text-white"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
                     <button
                         type="submit"
-                        className="w-full rounded-xl bg-black py-4 text-xs font-black uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d] shadow-lg shadow-[#FFD000]/10"
+                        className="w-full rounded-xl bg-black py-4 text-xs font-black uppercase tracking-[0.2em] force-light-text transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d] shadow-lg shadow-[#FFD000]/10 mt-2"
                     >
                         Establish Uplink
                     </button>
@@ -158,10 +193,10 @@ const AdminDashboard = () => {
     if (!user) return <div className="p-20 text-center font-bold text-gray-500">Initializing node...</div>;
 
     const menu = [
-        { label: 'Fleet Audits', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', path: '/admin-verification', desc: 'Certify partner credentials' },
-        { label: 'System Ledger', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1', path: '/admin/settings', desc: 'Revenue split summaries' },
-        { label: 'User Hub', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1', path: '/admin/users', desc: 'Rider & Driver directory' },
-        { label: 'Global Setup', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066', path: '/admin/settings', desc: 'Fare matrix & parameters' }
+        { label: 'Fleet Audits', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', path: '/admin/verification', desc: 'Certify partner credentials' },
+        { label: 'System Ledger', icon: 'M9 7h6m0 10v-3m-3 3v-3m-3 3v-3m2-10a2 2 0 012 2v1h-4V9a2 2 0 012-2zm-6 3h12v11a2 2 0 01-2 2H7a2 2 0 01-2-2V10z', path: '/admin/settings', desc: 'Revenue split summaries' },
+        { label: 'User Hub', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', path: '/admin/users', desc: 'Rider & Driver directory' },
+        { label: 'Global Setup', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', path: '/admin/settings', desc: 'Fare matrix & parameters' }
     ];
 
     return (
@@ -176,10 +211,12 @@ const AdminDashboard = () => {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: 'Total Users', val: stats.totalUsers, icon: 'M12 4.354a4 4 0 110 5.292' },
-                    { label: 'Active Fleet', val: stats.activeDrivers, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0' },
-                    { label: 'Revenue', val: `₹${stats.totalRevenue}`, icon: 'M12 8c-1.657 0-3 .895-3 2' },
-                    { label: 'Commissions', val: `₹${commissionSummary.totalCommission?.toFixed(0)}`, icon: 'M17 9V7a2 2 0 00-2-2H5' }
+                    { label: 'Total Users', val: stats.totalUsers, icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
+                    { label: 'Active Fleet', val: stats.activeDrivers, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+                    {
+                        label: 'Revenue', val: `₹${stats.totalRevenue}`, icon: "M6 3h12v2H11.5c1.93 0 3.5 1.57 3.5 3.5S13.43 12 11.5 12H9.41l6.3 6.29-1.41 1.42L8 12.41V11h3.5c1.1 0 2-.9 2-2s-.9-2-2-2H6V3z"
+                    },
+                    { label: 'Commissions', val: `₹${commissionSummary.totalCommission?.toFixed(0)}`, icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' }
                 ].map((s, i) => (
                     <div key={i} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-white/5 dark:bg-neutral-900/40">
                         <div className="flex items-center justify-between">
@@ -291,7 +328,7 @@ function App() {
 
                             {/* Admin Routes */}
                             <Route path="/admin" element={<AdminDashboard />} />
-                            <Route path="/admin-verification" element={<AdminVerification />} />
+                            <Route path="/admin/verification" element={<AdminVerification />} />
                             <Route path="/admin/users" element={<AllUsers />} />
                             <Route path="/admin/active-rides" element={<AllActiveRides />} />
                             <Route path="/admin/settings" element={<SystemSettings />} />

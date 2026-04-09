@@ -86,7 +86,7 @@ const AvailabilityToggle = ({ status, onToggle }) => {
     return (
         <div className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300 dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
             <div className="flex items-center gap-4">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 ${isOnline ? 'bg-[#FFD000] text-black shadow-lg shadow-[#FFD000]/20' : 'bg-gray-100 text-gray-400 dark:bg-white/5'}`}>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 ${isOnline ? 'bg-[#FFD000] text-black shadow-lg shadow-[#FFD000]/20' : 'bg-gray-100 text-gray-500 dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400'}`}>
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
@@ -99,9 +99,9 @@ const AvailabilityToggle = ({ status, onToggle }) => {
             </div>
             <button
                 onClick={onToggle}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 focus:outline-none ${isOnline ? 'bg-[#FFD000]' : 'bg-gray-200 dark:bg-white/10'}`}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 focus:outline-none ${isOnline ? 'bg-[#FFD000]' : 'bg-gray-300 dark:bg-[rgba(255,255,255,0.10)]'}`}
             >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${isOnline ? 'translate-x-6' : 'translate-x-1'}`} />
+                <span className="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-300" style={{ transform: isOnline ? 'translateX(1.5rem)' : 'translateX(0.25rem)' }} />
             </button>
         </div>
     );
@@ -116,10 +116,10 @@ const QuickActionCard = ({ icon, title, desc, action, to, delay = 0 }) => {
             ref={ref}
             data-reveal
             onClick={() => navigate(to)}
-            className="group cursor-pointer rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#FFD000]/30 hover:shadow-xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl"
+            className="group cursor-pointer rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#FFD000]/30 hover:shadow-xl dark:border-transparent dark:bg-neutral-900/40 dark:backdrop-blur-xl dark:border-[rgba(255,255,255,0.05)]"
             style={{ '--reveal-delay': `${delay}ms` }}
         >
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition-colors duration-300 group-hover:bg-[#FFD000] group-hover:text-black dark:bg-white/5 dark:text-gray-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-600 transition-colors duration-300 group-hover:bg-[#FFD000] group-hover:text-black dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">{icon}</svg>
             </div>
             <h3 className="mt-4 text-base font-bold text-gray-900 dark:text-white">{title}</h3>
@@ -266,7 +266,7 @@ const DriverDashboard = () => {
                         </div>
                         <button
                             onClick={() => navigate('/active-ride')}
-                            className="w-full rounded-xl bg-black px-8 py-4 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all hover:bg-neutral-800 active:scale-95 md:w-auto"
+                            className="w-full rounded-xl bg-black px-8 py-4 text-xs font-black uppercase tracking-[0.2em] force-light-text shadow-xl transition-all hover:bg-neutral-800 active:scale-95 md:w-auto"
                         >
                             Open Controls
                         </button>
@@ -388,7 +388,7 @@ const DriverDashboard = () => {
                                     </div>
                                     <button
                                         onClick={() => { localStorage.setItem('selectedRideRequest', JSON.stringify(r)); navigate('/accept-reject-ride'); }}
-                                        className="w-full rounded-xl bg-black py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
+                                        className="w-full rounded-xl bg-black py-4 text-[10px] font-black uppercase tracking-[0.2em] force-light-text transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
                                     >
                                         Review Signal
                                     </button>
@@ -398,9 +398,9 @@ const DriverDashboard = () => {
                     </div>
                 ) : (
                     <div className="flex flex-col items-center py-20 text-center">
-                        <div className="relative mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-dashed border-gray-200 dark:border-white/10">
+                        <div className="relative mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-dashed border-gray-300 dark:border-[rgba(255,255,255,0.10)]">
                             {driverStatus === 'online' && <div className="absolute inset-0 animate-ping rounded-full border border-[#FFD000]/30" />}
-                            <svg className={`h-10 w-10 ${driverStatus === 'online' ? 'text-[#FFD000]' : 'text-gray-300 dark:text-gray-700'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={`h-10 w-10 ${driverStatus === 'online' ? 'text-[#FFD000]' : 'text-gray-400 dark:text-gray-700'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a9.5 9.5 0 0113.436 0m-17.678-4.242a14.5 14.5 0 0120.661 0" />
                             </svg>
                         </div>

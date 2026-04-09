@@ -129,7 +129,7 @@ const AllActiveRides = () => {
                                 <div className="rounded-[2rem] bg-gray-50 p-6 dark:bg-white/5 border border-gray-100 dark:border-white/5">
                                     <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-4">Passenger</p>
                                     <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-xl bg-black text-white flex items-center justify-center text-sm font-bold dark:bg-[#FFD000] dark:text-black">
+                                        <div className="h-10 w-10 rounded-xl bg-black force-light-text flex items-center justify-center text-sm font-bold dark:bg-[#FFD000] dark:text-black">
                                             {ride.rider?.name?.charAt(0) || 'R'}
                                         </div>
                                         <div className="min-w-0">
@@ -138,7 +138,7 @@ const AllActiveRides = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="rounded-[2rem] bg-black p-6 text-white border border-white/5">
+                                <div className="rounded-[2rem] bg-black p-6 force-light-text border border-white/5">
                                     <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-4">Driver</p>
                                     {ride.driver ? (
                                         <div className="flex items-center gap-4">
@@ -195,7 +195,7 @@ const AllActiveRides = () => {
                                     </div>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); navigate(`/live-ride/${ride._id}`); }}
-                                        className="h-14 w-14 rounded-2xl bg-black flex items-center justify-center text-white shadow-xl hover:scale-110 hover:-rotate-12 transition-all dark:bg-[#FFD000] dark:text-black"
+                                        className="h-14 w-14 rounded-2xl bg-black flex items-center justify-center force-light-text shadow-xl hover:scale-110 hover:-rotate-12 transition-all dark:bg-[#FFD000] dark:text-black"
                                     >
                                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

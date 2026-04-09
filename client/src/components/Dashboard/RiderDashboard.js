@@ -353,7 +353,7 @@ const RiderDashboard = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <button onClick={() => navigate(`/live-ride/${activeRide._id}`)} className="py-3 bg-black text-white cz-bebas text-lg tracking-widest rounded-xl hover:scale-[1.03] active:scale-95 transition-all">TERMINAL →</button>
+                  <button onClick={() => navigate(`/live-ride/${activeRide._id}`)} className="py-3 bg-black force-light-text cz-bebas text-lg tracking-widest rounded-xl hover:scale-[1.03] active:scale-95 transition-all">TERMINAL →</button>
                   <button onClick={() => handleCancelRide(activeRide._id)} className="py-3 bg-black/10 text-black cz-bebas text-lg tracking-widest rounded-xl hover:bg-black/20 transition-all border border-black/10">ABORT</button>
                 </div>
               </div>

@@ -90,17 +90,17 @@ const IncomingRideRequest = () => {
 
       <div className="space-y-6">
         {loading ? (
-          <div className="rounded-[2.5rem] border border-gray-200 bg-white p-24 text-center dark:border-white/5 dark:bg-neutral-900/40">
-            <div className="mx-auto h-20 w-20 flex items-center justify-center rounded-full bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10">
+          <div className="rounded-[2.5rem] border border-gray-200 bg-white p-24 text-center dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40">
+            <div className="mx-auto h-20 w-20 flex items-center justify-center rounded-full bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border border-dashed border-gray-300 dark:border-[rgba(255,255,255,0.10)]">
                 <div className="h-10 w-10 border-4 border-[#FFD000] border-t-transparent animate-spin rounded-full" />
             </div>
             <h4 className="mt-8 text-xl font-bold">Scanning...</h4>
             <p className="mt-2 text-sm text-gray-500 uppercase tracking-widest">Awaiting dispatch signals from the network</p>
           </div>
         ) : rideRequests.length === 0 ? (
-          <div className="rounded-[2.5rem] border border-gray-200 bg-white p-24 text-center dark:border-white/5 dark:bg-neutral-900/40">
-            <div className="mx-auto h-32 w-32 flex items-center justify-center rounded-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 mb-8">
-              <svg className="h-16 w-16 text-gray-300 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="rounded-[2.5rem] border border-gray-200 bg-white p-24 text-center dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40">
+            <div className="mx-auto h-32 w-32 flex items-center justify-center rounded-full bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border border-gray-200 dark:border-[rgba(255,255,255,0.10)] mb-8">
+              <svg className="h-16 w-16 text-gray-400 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a9.5 9.5 0 0114.142 0" />
               </svg>
             </div>
@@ -116,11 +116,11 @@ const IncomingRideRequest = () => {
         ) : (
           <div className="grid gap-8">
             {rideRequests.map((request) => (
-              <div key={request._id} className="group relative rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:border-[#FFD000]/30 hover:shadow-2xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
+              <div key={request._id} className="group relative rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:border-[#FFD000]/30 hover:shadow-2xl dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl">
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-10">
                   <div className="flex items-center gap-8">
                     <div className="relative">
-                        <div className="h-24 w-24 rounded-[2rem] bg-gray-100 dark:bg-white/5 flex items-center justify-center text-4xl font-black text-[#FFD000] border-4 border-white dark:border-neutral-800 shadow-xl group-hover:scale-110 transition-transform">
+                        <div className="h-24 w-24 rounded-[2rem] bg-gray-100 dark:bg-[rgba(255,255,255,0.05)] flex items-center justify-center text-4xl font-black text-[#FFD000] border-4 border-white dark:border-neutral-800 shadow-xl group-hover:scale-110 transition-transform">
                             {request.rider?.name?.charAt(0) || 'U'}
                         </div>
                         <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-emerald-500 border-4 border-white dark:border-neutral-800 shadow-lg" />
@@ -146,7 +146,7 @@ const IncomingRideRequest = () => {
                 </div>
 
                 <div className="mt-10 grid gap-8 lg:grid-cols-2 items-end">
-                    <div className="space-y-6 rounded-[2rem] border border-gray-100 bg-gray-50/50 p-8 dark:border-white/5 dark:bg-white/5">
+                    <div className="space-y-6 rounded-[2rem] border border-gray-100 bg-gray-50 p-8 dark:border-[rgba(255,255,255,0.05)] dark:bg-[rgba(255,255,255,0.05)]">
                         <div className="flex gap-6 items-start">
                             <div className="mt-1.5 h-3 w-3 rounded-full bg-emerald-500 ring-4 ring-emerald-500/10" />
                             <div>
@@ -164,7 +164,7 @@ const IncomingRideRequest = () => {
                     </div>
                     <button
                         onClick={() => handleViewRequest(request)}
-                        className="w-full rounded-2xl bg-black py-6 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d] active:scale-[0.98]"
+                        className="w-full rounded-2xl bg-black py-6 text-xs font-black uppercase tracking-[0.2em] force-light-text shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d] active:scale-[0.98]"
                     >
                         Review Request Signal &rarr;
                     </button>

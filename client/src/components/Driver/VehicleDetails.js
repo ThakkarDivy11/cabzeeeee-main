@@ -116,7 +116,7 @@ const VehicleDetails = () => {
                 <div className="flex items-center gap-6">
                     <button
                         onClick={() => navigate('/driver-profile')}
-                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400 dark:hover:bg-[rgba(255,255,255,0.10)]"
                     >
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -215,14 +215,14 @@ const VehicleDetails = () => {
                             <button
                                 type="button"
                                 onClick={() => navigate('/driver-profile')}
-                                className="rounded-2xl border border-gray-200 bg-white px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all dark:bg-white/5 dark:border-white/5"
+                                className="rounded-2xl border border-gray-200 bg-white px-8 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.05)]"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="rounded-2xl bg-black px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-xl hover:scale-105 active:scale-95 transition-all dark:bg-[#FFD000] dark:text-black"
+                                className="rounded-2xl bg-black px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em] force-light-text shadow-xl hover:scale-105 active:scale-95 transition-all dark:bg-[#FFD000] dark:text-black"
                             >
                                 {saving ? 'Updating...' : 'Save Vehicle Info'}
                             </button>

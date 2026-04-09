@@ -62,7 +62,11 @@ const UserRideHistory = () => {
       doc.setFont('helvetica', 'normal'); doc.text(user?.name || 'Valued Client', 20, 67);
       doc.text(`ID: ${ride._id.substring(0, 8)}...`, 140, 67);
       doc.setFillColor(245, 245, 245); doc.rect(20, 95, 170, 10, 'F');
-      doc.text('Base Fare & Logistics', 25, 115); doc.text(`INR ${ride.fare}.00`, 160, 115);
+      doc.setFontSize(8); doc.setTextColor(100, 100, 100); doc.text('DESCRIPTION', 25, 101.5); doc.text('AMOUNT', 160, 101.5);
+      doc.setFontSize(10); doc.setTextColor(6, 6, 10); doc.setFont('helvetica', 'normal');
+      doc.text('Base Fare & Logistics', 25, 112); doc.text(`INR ${ride.fare}.00`, 160, 112);
+      doc.setDrawColor(200, 200, 200); doc.line(20, 118, 190, 118);
+      doc.setFont('helvetica', 'bold'); doc.text('TOTAL AMOUNT', 25, 128); doc.text(`INR ${ride.fare}.00`, 160, 128);
       doc.save(`CabZee-Invoice-${ride._id.substring(0, 8)}.pdf`);
       toast.success('Invoice downloaded successfully');
     } catch (error) { toast.error('Failed to generate invoice'); }
@@ -94,7 +98,7 @@ const UserRideHistory = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex items-center gap-6 rounded-[2rem] bg-white px-8 py-5 shadow-sm ring-1 ring-gray-100 dark:bg-white/[0.02] dark:ring-white/5">
+            <div className="flex items-center gap-6 rounded-[2rem] bg-white px-8 py-5 shadow-sm ring-1 ring-gray-100 dark:bg-[rgba(255,255,255,0.02)] dark:ring-[rgba(255,255,255,0.05)]">
                 <div className="text-right">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Total Journeys</p>
                     <p className="text-3xl font-black tracking-tight text-yellow-600 dark:text-yellow-400">{rides.length}</p>
@@ -109,13 +113,13 @@ const UserRideHistory = () => {
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center rounded-[3rem] bg-white py-32 shadow-sm ring-1 ring-gray-100 dark:bg-white/[0.02] dark:ring-white/5">
+          <div className="flex flex-col items-center justify-center rounded-[3rem] bg-white py-32 shadow-sm ring-1 ring-gray-100 dark:bg-[rgba(255,255,255,0.02)] dark:ring-[rgba(255,255,255,0.05)]">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-yellow-400/20 border-t-yellow-400"></div>
             <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.3em] text-gray-400 dark:text-gray-600">Synchronizing Archive...</p>
           </div>
         ) : rides.length === 0 ? (
-          <div className="rounded-[3rem] bg-white p-20 text-center shadow-sm ring-1 ring-gray-100 dark:bg-white/[0.02] dark:ring-white/5">
-            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gray-50 text-gray-200 dark:bg-white/5 dark:text-gray-800">
+          <div className="rounded-[3rem] bg-white p-20 text-center shadow-sm ring-1 ring-gray-100 dark:bg-[rgba(255,255,255,0.02)] dark:ring-[rgba(255,255,255,0.05)]">
+            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-700">
                 <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
@@ -184,7 +188,7 @@ const UserRideHistory = () => {
                   <div className="flex flex-col items-center justify-between gap-6 border-t border-gray-100 pt-10 dark:border-white/5 sm:flex-row">
                     {ride.driver && (
                         <div className="flex items-center gap-5">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 font-black text-gray-400 dark:bg-white/5 dark:text-yellow-400">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 font-black text-gray-500 dark:bg-[rgba(255,255,255,0.05)] dark:text-yellow-400">
                                 {ride.driver.name[0]}
                             </div>
                             <div>
@@ -195,7 +199,7 @@ const UserRideHistory = () => {
                     )}
                     <button 
                       onClick={() => handleDownloadInvoice(ride)}
-                      className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white px-8 py-4 transition-all hover:bg-[#FFD000] hover:text-black hover:border-[#FFD000] hover:scale-[1.05] dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-[#FFD000] dark:hover:text-black dark:hover:border-[#FFD000] sm:w-auto"
+                      className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white px-8 py-4 text-gray-700 transition-all hover:bg-[#FFD000] hover:text-black hover:border-[#FFD000] hover:scale-[1.05] dark:border-[rgba(255,255,255,0.10)] dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-300 dark:hover:bg-[#FFD000] dark:hover:text-black dark:hover:border-[#FFD000] sm:w-auto"
                     >
                       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

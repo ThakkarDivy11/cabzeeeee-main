@@ -624,3 +624,8 @@ html:not(.dark) [class*="bg-[#020617]"] {
 
 .cz-bebas { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; }
 .cz-dm { font-family: 'DM Sans', sans-serif; }
+
+/* Forced utility for dark backgrounds in light mode */
+.force-light-text { color: #ffffff !important; }
+/* Muted white — for secondary text on intentionally black/dark cards */
+.force-muted-white { color: rgba(180, 180, 180, 0.85) !important; }

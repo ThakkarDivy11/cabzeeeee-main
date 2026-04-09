@@ -57,7 +57,7 @@ const DriverProfile = () => {
         <div className="flex items-center gap-6">
             <button
                 onClick={() => navigate('/driver')}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400 dark:hover:bg-[rgba(255,255,255,0.10)]"
             >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -70,7 +70,7 @@ const DriverProfile = () => {
         </div>
         <button
             onClick={() => navigate('/edit-driver-profile')}
-            className="rounded-xl bg-black px-8 py-3.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
+            className="rounded-xl bg-black px-8 py-3.5 text-[10px] font-black uppercase tracking-widest force-light-text shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
         >
             Update Information &rarr;
         </button>
@@ -81,7 +81,7 @@ const DriverProfile = () => {
         <div className="group relative rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm transition-all duration-500 hover:shadow-2xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
             <div className="flex flex-col md:flex-row items-center gap-12 border-b border-gray-100 pb-12 dark:border-white/5">
                 <div className="relative">
-                    <div className="h-40 w-40 rounded-[3rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-4 border-white dark:border-neutral-800 shadow-2xl flex items-center justify-center">
+                    <div className="h-40 w-40 rounded-[3rem] overflow-hidden bg-gray-100 dark:bg-[rgba(255,255,255,0.05)] border-4 border-white dark:border-neutral-800 shadow-2xl flex items-center justify-center">
                         {user.profilePicture ? (
                             <img 
                                 src={user.profilePicture.startsWith('http') ? user.profilePicture : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${user.profilePicture}`} 
@@ -108,18 +108,18 @@ const DriverProfile = () => {
                     </div>
 
                     <div className="mt-8 grid grid-cols-3 gap-6">
-                        <div className="rounded-2xl bg-gray-50 p-4 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                        <div className="rounded-2xl bg-gray-50 p-4 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                             <p className="text-[9px] font-bold text-gray-400 uppercase mb-1">Status</p>
                             <div className="flex items-center gap-2">
                                 <div className={`h-2 w-2 rounded-full ${user.driverStatus === 'online' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-300'}`} />
                                 <span className="text-xs font-black uppercase text-gray-900 dark:text-white">{user.driverStatus || 'offline'}</span>
                             </div>
                         </div>
-                        <div className="rounded-2xl bg-gray-50 p-4 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                        <div className="rounded-2xl bg-gray-50 p-4 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                             <p className="text-[9px] font-bold text-gray-400 uppercase mb-1">Rating</p>
                             <p className="text-xs font-black text-gray-900 dark:text-white">{user.rating || 5.0} <span className="text-[#FFD000]">★</span></p>
                         </div>
-                        <div className="rounded-2xl bg-gray-50 p-4 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                        <div className="rounded-2xl bg-gray-50 p-4 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                             <p className="text-[9px] font-bold text-gray-400 uppercase mb-1">Trips</p>
                             <p className="text-xs font-black text-gray-900 dark:text-white">{user.totalRides || 0}</p>
                         </div>
@@ -156,7 +156,7 @@ const DriverProfile = () => {
                 </div>
                 <button
                     onClick={() => navigate('/vehicle-details')}
-                    className="rounded-xl bg-gray-50 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-gray-900 hover:bg-gray-100 transition-all dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+                    className="rounded-xl bg-gray-50 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-gray-900 hover:bg-gray-100 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-300 dark:hover:bg-[rgba(255,255,255,0.10)]"
                 >
                     Update Vehicle &rarr;
                 </button>
@@ -164,22 +164,22 @@ const DriverProfile = () => {
 
             {user.vehicleInfo ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div className="rounded-3xl bg-gray-50/50 p-6 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                    <div className="rounded-3xl bg-gray-50 p-6 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                         <p className="text-[9px] font-bold text-gray-400 uppercase mb-2">Model</p>
                         <p className="text-lg font-bold text-gray-900 dark:text-white">{user.vehicleInfo.make} {user.vehicleInfo.model}</p>
                     </div>
-                    <div className="rounded-3xl bg-gray-50/50 p-6 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                    <div className="rounded-3xl bg-gray-50 p-6 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                         <p className="text-[9px] font-bold text-gray-400 uppercase mb-2">License Plate</p>
                         <p className="text-lg font-bold text-gray-900 dark:text-white uppercase tracking-wider">{user.vehicleInfo.licensePlate}</p>
                     </div>
-                    <div className="rounded-3xl bg-gray-50/50 p-6 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                    <div className="rounded-3xl bg-gray-50 p-6 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                         <p className="text-[9px] font-bold text-gray-400 uppercase mb-2">Color</p>
                         <div className="flex items-center gap-3">
                             <div className="h-4 w-4 rounded-full border border-gray-200 dark:border-white/10" style={{ backgroundColor: user.vehicleInfo.color?.toLowerCase() }} />
                             <p className="text-lg font-bold text-gray-900 dark:text-white capitalize">{user.vehicleInfo.color}</p>
                         </div>
                     </div>
-                    <div className="rounded-3xl bg-gray-50/50 p-6 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                    <div className="rounded-3xl bg-gray-50 p-6 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                         <p className="text-[9px] font-bold text-gray-400 uppercase mb-2">Class</p>
                         <p className="text-lg font-bold text-gray-900 dark:text-white capitalize">{user.vehicleInfo.vehicleType || 'Standard'}</p>
                     </div>
@@ -189,7 +189,7 @@ const DriverProfile = () => {
                     <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No Asset Linked to Profile</p>
                     <button
                         onClick={() => navigate('/vehicle-details')}
-                        className="mt-6 rounded-xl bg-black px-10 py-4 text-[10px] font-black uppercase tracking-widest text-white hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black"
+                        className="mt-6 rounded-xl bg-black px-10 py-4 text-[10px] font-black uppercase tracking-widest force-light-text hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black"
                     >
                         Sync Vehicle Data
                     </button>

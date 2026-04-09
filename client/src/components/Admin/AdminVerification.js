@@ -49,7 +49,11 @@ const AdminVerification = () => {
                 toast.success(`Document ${status ? "verified" : "rejected"}`);
                 fetchDrivers();
             } else {
-                toast.error(data.message);
+                if (response.status === 401 || response.status === 403) {
+                    navigate('/admin-login');
+                    return;
+                }
+                toast.error('Verification failed — check permissions');
             }
         } catch (error) {
             toast.error("Verification failed");
@@ -98,7 +102,7 @@ const AdminVerification = () => {
                         <div key={driver._id} className="group relative rounded-[3.5rem] border border-gray-200 bg-white shadow-sm transition-all duration-500 hover:shadow-2xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 p-10 border-b border-gray-100 dark:border-white/5">
                                 <div className="flex items-center gap-8">
-                                    <div className="h-16 w-16 rounded-[1.5rem] bg-black text-white flex items-center justify-center text-2xl font-black italic shadow-xl dark:bg-[#FFD000] dark:text-black">
+                                    <div className="h-16 w-16 rounded-[1.5rem] bg-black force-light-text flex items-center justify-center text-2xl font-black italic shadow-xl dark:bg-[#FFD000] dark:text-black">
                                         {driver.name.charAt(0)}
                                     </div>
                                     <div className="min-w-0">
@@ -136,7 +140,7 @@ const AdminVerification = () => {
 
                                                     <div className="group/img relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-black border border-gray-100 dark:border-white/5">
                                                         <img
-                                                            src={`${process.env.REACT_APP_API_URL || "http://localhost:5000"}${doc.fileUrl}`}
+                                                            src={doc.fileUrl.startsWith('http') ? doc.fileUrl : `${process.env.REACT_APP_API_URL || "http://localhost:5000"}${doc.fileUrl}`}
                                                             alt={type}
                                                             className="h-full w-full object-cover transition-transform duration-700 group-hover/img:scale-110 opacity-70"
                                                         />
@@ -161,7 +165,7 @@ const AdminVerification = () => {
                                                         <div className="flex gap-4">
                                                             <button
                                                                 onClick={() => handleVerify(driver._id, rejectReasons, type, true)}
-                                                                className="flex-1 rounded-2xl bg-black py-4 text-[10px] font-black uppercase tracking-widest text-white shadow-xl hover:scale-105 active:scale-95 transition-all dark:bg-[#FFD000] dark:text-black"
+                                                                className="flex-1 rounded-2xl bg-black py-4 text-[10px] font-black uppercase tracking-widest force-light-text shadow-xl hover:scale-105 active:scale-95 transition-all dark:bg-[#FFD000] dark:text-black"
                                                             >
                                                                 Approve
                                                             </button>

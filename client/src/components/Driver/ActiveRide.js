@@ -252,7 +252,7 @@ const ActiveRide = () => {
     const showFeedback = paymentReceived && !ratingSubmitted && !(activeRide && activeRide.riderRating);
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="w-full max-w-2xl space-y-8 rounded-[3rem] border border-gray-200 bg-white p-12 shadow-xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
+        <div className="w-full max-w-2xl space-y-8 rounded-[3rem] border border-gray-200 bg-white p-12 shadow-xl dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl">
             <div className="text-center">
                 <div className={`mx-auto flex h-20 w-20 items-center justify-center rounded-3xl ${paymentReceived ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-[#FFD000] text-black shadow-[#FFD000]/20'} shadow-xl mb-8`}>
                     <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -263,7 +263,7 @@ const ActiveRide = () => {
                 <p className="mt-4 text-sm text-gray-500 max-w-sm mx-auto">{paymentReceived ? 'Rider has successfully paid the trip fare. Please rate their behavior.' : 'Trip completed. Monitoring rider payment completion signal...'}</p>
             </div>
 
-            <div className="rounded-[2.5rem] bg-gray-50 p-8 dark:bg-white/5 border border-gray-100 dark:border-white/5 space-y-4">
+            <div className="rounded-[2.5rem] bg-gray-50 p-8 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)] space-y-4">
                 <div className="flex justify-between items-center text-sm font-bold uppercase tracking-widest text-gray-400">
                     <span>Final Fare</span>
                     <span>Passenger</span>
@@ -293,7 +293,7 @@ const ActiveRide = () => {
                       if (data.success) setRatingSubmitted(true);
                     } catch (err) { } finally { setSubmittingRating(false); }
                   }}
-                  className="w-full rounded-2xl bg-black py-5 text-xs font-black uppercase tracking-widest text-white shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
+                  className="w-full rounded-2xl bg-black py-5 text-xs font-black uppercase tracking-widest force-light-text shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
                 >
                   Submit Feedback &rarr;
                 </button>
@@ -314,7 +314,7 @@ const ActiveRide = () => {
             {!paymentReceived && (
               <button
                 onClick={() => { localStorage.removeItem('activeRide'); navigate('/driver'); }}
-                className="w-full rounded-2xl bg-emerald-500 py-6 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-500/10 transition-all hover:scale-105"
+                className="w-full rounded-2xl bg-emerald-500 py-6 text-xs font-black uppercase tracking-widest force-light-text shadow-xl shadow-emerald-500/10 transition-all hover:scale-105"
               >
                 I Received Payout & Finish
               </button>
@@ -330,7 +330,7 @@ const ActiveRide = () => {
             <div className="flex items-center gap-6">
                 <button
                     onClick={() => navigate('/driver')}
-                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10"
+                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-400 dark:hover:bg-[rgba(255,255,255,0.10)]"
                 >
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -349,7 +349,7 @@ const ActiveRide = () => {
 
         <div className="grid flex-1 grid-cols-1 lg:grid-cols-12 gap-8 overflow-hidden">
             {/* Map Container */}
-            <div className="lg:col-span-8 h-[400px] lg:h-full rounded-[3rem] overflow-hidden border border-gray-200 shadow-2xl dark:border-white/5 relative">
+            <div className="lg:col-span-8 h-[400px] lg:h-full rounded-[3rem] overflow-hidden border border-gray-200 shadow-2xl dark:border-[rgba(255,255,255,0.05)] relative">
                 <MapContainer center={currentLocation || mapCenter} zoom={15} className="h-full w-full">
                   <LiveLocationTracker onLocationUpdate={handleLocationUpdate} track={true} />
                   {currentLocation && <DriverMarker position={currentLocation} driverName={user.name} />}
@@ -376,15 +376,15 @@ const ActiveRide = () => {
 
             {/* Sidebar Controls */}
             <div className="lg:col-span-4 flex flex-col gap-6 h-full overflow-y-auto">
-                <div className="rounded-[3rem] border border-gray-200 bg-white p-8 shadow-sm dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl flex flex-col">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-8 dark:border-white/5">
+                <div className="rounded-[3rem] border border-gray-200 bg-white p-8 shadow-sm dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl flex flex-col">
+                    <div className="flex items-center justify-between border-b border-gray-100 pb-8 dark:border-[rgba(255,255,255,0.05)]">
                         <div className="flex items-center gap-4">
                             <div className="h-14 w-14 rounded-2xl bg-[#FFD000] flex items-center justify-center text-xl font-black text-black shadow-lg">
                                 {activeRide.rider.name.charAt(0)}
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">{activeRide.rider.name}</h3>
-                                <div className="mt-1 flex items-center gap-1.5 rounded-full bg-gray-50 px-2.5 py-0.5 dark:bg-white/5 border border-gray-100 dark:border-white/5">
+                                <div className="mt-1 flex items-center gap-1.5 rounded-full bg-gray-50 px-2.5 py-0.5 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">{rideStatus.replace('_', ' ')}</span>
                                 </div>
                             </div>
@@ -395,7 +395,7 @@ const ActiveRide = () => {
                     <div className="flex-1 py-8 space-y-6">
                         {/* OTP Logic */}
                         {activeRide.pickupOTP && !otpVerified && rideStatus === 'accepted' && (
-                            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-white/5">
+                            <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-[rgba(255,255,255,0.05)]">
                                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-center text-[#FFD000]">Security Verification Required</p>
                                 <input
                                     type="text"
@@ -403,12 +403,12 @@ const ActiveRide = () => {
                                     value={otpInput}
                                     onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
                                     placeholder="• • • •"
-                                    className="w-full rounded-2xl bg-gray-50 p-6 text-center text-5xl font-black tracking-[0.4em] outline-none focus:ring-4 focus:ring-[#FFD000]/20 dark:bg-white/5 dark:border-white/5 dark:text-white"
+                                    className="w-full rounded-2xl bg-gray-50 p-6 text-center text-5xl font-black tracking-[0.4em] outline-none focus:ring-4 focus:ring-[#FFD000]/20 dark:bg-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.05)]"
                                 />
                                 <button
                                     onClick={handleVerifyOTP}
                                     disabled={otpInput.length !== 4}
-                                    className="w-full rounded-2xl bg-black py-5 text-xs font-black uppercase tracking-widest text-white shadow-xl hover:bg-neutral-800 disabled:opacity-20 transition-all dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
+                                    className="w-full rounded-2xl bg-black py-5 text-xs font-black uppercase tracking-widest force-light-text shadow-xl hover:bg-neutral-800 disabled:opacity-20 transition-all dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
                                 >
                                     Start Trip &rarr;
                                 </button>
@@ -433,7 +433,7 @@ const ActiveRide = () => {
                             </div>
                         </div>
 
-                        <div className="rounded-3xl bg-gray-50 p-6 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-between">
+                        <div className="rounded-3xl bg-gray-50 p-6 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)] flex items-center justify-between">
                             <div>
                                 <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Estimated duration</p>
                                 <p className="text-2xl font-black text-gray-900 dark:text-white">{activeRide.estimatedTime || '12'} MIN</p>
@@ -446,7 +446,7 @@ const ActiveRide = () => {
                         </div>
                     </div>
 
-                    <div className="pt-8 border-t border-gray-100 dark:border-white/5 space-y-4">
+                    <div className="pt-8 border-t border-gray-100 dark:border-[rgba(255,255,255,0.05)] space-y-4">
                          {rideStatus === 'on_board' && (
                             <button
                                 onClick={() => handleStatusChange('picked-up')}
@@ -458,7 +458,7 @@ const ActiveRide = () => {
                         {rideStatus === 'picked-up' && (
                             <button
                                 onClick={() => handleStatusChange('completed')}
-                                className="w-full rounded-2xl bg-black py-6 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black"
+                                className="w-full rounded-2xl bg-black py-6 text-xs font-black uppercase tracking-[0.2em] force-light-text shadow-xl transition-all hover:bg-neutral-800 dark:bg-[#FFD000] dark:text-black"
                             >
                                 Complete Settlement &rarr;
                             </button>

@@ -189,13 +189,13 @@ const DriverRideHistory = () => {
                 <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-[#FFD000]">Archived activity logs</p>
             </div>
         </div>
-        <div className="flex h-12 items-center gap-3 rounded-2xl bg-black px-6 text-[10px] font-black uppercase tracking-widest text-white shadow-xl dark:bg-[#FFD000] dark:text-black">
+        <div className="flex h-12 items-center gap-3 rounded-2xl bg-black px-6 text-[10px] font-black uppercase tracking-widest force-light-text shadow-xl dark:bg-[#FFD000] dark:text-black">
             Total Trips: {rides.length}
         </div>
       </header>
 
       {activeRide && (
-        <div className="group relative rounded-[3rem] bg-black p-8 text-white shadow-2xl transition-all hover:scale-[1.01] dark:bg-[#111]">
+        <div className="group relative rounded-[3rem] bg-black p-8 shadow-2xl transition-all hover:scale-[1.01] dark:bg-[#111]">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFD000]/10 text-[#FFD000] border border-[#FFD000]/20">
@@ -205,7 +205,7 @@ const DriverRideHistory = () => {
                     </div>
                     <div>
                         <p className="text-[9px] font-bold uppercase tracking-widest text-[#FFD000] mb-1">Ongoing Trip</p>
-                        <h4 className="text-xl font-bold tracking-tight">Active mission in progress</h4>
+                        <h4 className="text-xl font-bold tracking-tight force-light-text">Active mission in progress</h4>
                     </div>
                 </div>
                 <button
@@ -219,18 +219,18 @@ const DriverRideHistory = () => {
       )}
 
       {loading ? (
-        <div className="text-center py-24 rounded-[3.5rem] border border-gray-100 bg-white dark:border-white/5 dark:bg-neutral-900/40">
+        <div className="text-center py-24 rounded-[3.5rem] border border-gray-100 bg-white dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40">
             <div className="h-12 w-12 border-4 border-[#FFD000] border-t-transparent animate-spin rounded-full mx-auto" />
         </div>
       ) : rides.length === 0 ? (
-        <div className="text-center py-24 rounded-[3.5rem] border-2 border-dashed border-gray-100 dark:border-white/5">
+        <div className="text-center py-24 rounded-[3.5rem] border-2 border-dashed border-gray-200 dark:border-[rgba(255,255,255,0.05)]">
             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No Archival Records Found</p>
         </div>
       ) : (
         <div className="space-y-8">
             {rides.map((ride) => (
-                <div key={ride._id} className="group relative rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm transition-all duration-500 hover:shadow-2xl dark:border-white/5 dark:bg-neutral-900/40 dark:backdrop-blur-xl">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-gray-100 pb-10 dark:border-white/5">
+                <div key={ride._id} className="group relative rounded-[3rem] border border-gray-200 bg-white p-10 shadow-sm transition-all duration-500 hover:shadow-2xl dark:border-[rgba(255,255,255,0.05)] dark:bg-neutral-900/40 dark:backdrop-blur-xl">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-gray-100 pb-10 dark:border-[rgba(255,255,255,0.05)]">
                         <div className="flex items-center gap-6">
                              <div className={`flex h-12 px-6 items-center justify-center rounded-full text-[10px] font-black uppercase tracking-widest border ${ride.status === 'completed' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}>
                                 {ride.status}
@@ -263,9 +263,9 @@ const DriverRideHistory = () => {
 
                         <div className="flex flex-col justify-between gap-6">
                             {ride.rider && (
-                                <div className="rounded-3xl bg-gray-50 p-6 dark:bg-white/5 border border-gray-100 dark:border-white/5 flex items-center justify-between">
+                                <div className="rounded-3xl bg-gray-50 p-6 dark:bg-[rgba(255,255,255,0.05)] border border-gray-100 dark:border-[rgba(255,255,255,0.05)] flex items-center justify-between">
                                     <div className="flex items-center gap-4">
-                                        <div className="h-12 w-12 rounded-xl bg-black flex items-center justify-center text-sm font-bold text-white dark:bg-[#FFD000] dark:text-black">
+                                        <div className="h-12 w-12 rounded-xl bg-black flex items-center justify-center text-sm font-bold force-light-text dark:bg-[#FFD000] dark:text-black">
                                             {ride.rider.name.charAt(0)}
                                         </div>
                                         <div>
@@ -282,7 +282,7 @@ const DriverRideHistory = () => {
                             {ride.status === 'completed' && (
                                 <button
                                     onClick={() => handleDownloadInvoice(ride)}
-                                    className="w-full flex items-center justify-center gap-3 rounded-2xl bg-gray-100 py-4 text-[10px] font-black uppercase tracking-widest text-gray-900 hover:bg-gray-200 transition-all dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+                                    className="w-full flex items-center justify-center gap-3 rounded-2xl bg-gray-100 py-4 text-[10px] font-black uppercase tracking-widest text-gray-900 hover:bg-gray-200 transition-all dark:bg-[rgba(255,255,255,0.10)] dark:hover:bg-[rgba(255,255,255,0.20)]"
                                 >
                                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 16l-4-4m0 0l4-4m-4 4h18" />

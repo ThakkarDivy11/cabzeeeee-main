@@ -174,7 +174,7 @@ const Reports = () => {
                     </button>
                     <button
                         onClick={exportToPDF}
-                        className="rounded-xl bg-black px-8 py-3 text-[10px] font-black uppercase tracking-widest text-white shadow-xl hover:bg-neutral-800 transition-all dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
+                        className="rounded-xl bg-black px-8 py-3 text-[10px] font-black uppercase tracking-widest force-light-text shadow-xl hover:bg-neutral-800 transition-all dark:bg-[#FFD000] dark:text-black dark:hover:bg-[#ffe04d]"
                     >
                         Generate PDF
                     </button>
@@ -212,7 +212,7 @@ const Reports = () => {
                         <div className="flex gap-4">
                             <button
                                 onClick={applyDateFilter}
-                                className="rounded-xl bg-black px-8 py-4 text-[10px] font-black uppercase tracking-widest text-white transition-all dark:bg-[#FFD000] dark:text-black"
+                                className="rounded-xl bg-black px-8 py-4 text-[10px] font-black uppercase tracking-widest force-light-text transition-all dark:bg-[#FFD000] dark:text-black"
                             >
                                 Apply Scope
                             </button>
@@ -274,12 +274,12 @@ const Reports = () => {
 
                 {/* Ride Deep-dive */}
                 {rideStats && (
-                    <div className="rounded-[3.5rem] bg-black p-12 text-white shadow-2xl shadow-black/20 dark:bg-[#111]">
+                    <div className="rounded-[3.5rem] bg-black p-12 force-light-text shadow-2xl shadow-black/20 dark:bg-[#111]">
                         <h3 className="text-2xl font-bold tracking-tight lowercase mb-10 text-[#FFD000]">Trip Analytics</h3>
                         <div className="space-y-8">
                             <div className="flex justify-between items-center py-4 border-b border-white/5">
                                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Completed Trips</span>
-                                <span className="text-2xl font-black text-white">{rideStats.ridesByStatus.completed}</span>
+                                <span className="text-2xl font-black force-light-text">{rideStats.ridesByStatus.completed}</span>
                             </div>
                             <div className="flex justify-between items-center py-4 border-b border-white/5">
                                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Cancelled Deployments</span>
@@ -291,7 +291,7 @@ const Reports = () => {
                             </div>
                             <div className="flex justify-between items-center py-4">
                                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Mean Trip Distance</span>
-                                <span className="text-2xl font-black text-white">{rideStats.averageDistance} KM</span>
+                                <span className="text-2xl font-black force-light-text">{rideStats.averageDistance} KM</span>
                             </div>
                         </div>
                     </div>
@@ -316,7 +316,7 @@ const Reports = () => {
                                     <tr key={driver._id} className="transition-colors hover:bg-gray-50/50 dark:hover:bg-white/5">
                                         <td className="px-10 py-8">
                                             <div className="flex items-center gap-6">
-                                                <div className="h-12 w-12 rounded-xl bg-black flex items-center justify-center text-sm font-bold text-white dark:bg-[#FFD000] dark:text-black">
+                                                <div className="h-12 w-12 rounded-xl bg-black flex items-center justify-center text-sm font-bold force-light-text dark:bg-[#FFD000] dark:text-black">
                                                     {driver.name.charAt(0)}
                                                 </div>
                                                 <div className="min-w-0">
