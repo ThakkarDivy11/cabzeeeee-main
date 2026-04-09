@@ -305,4 +305,61 @@
 .cz-footer-bottom { display:flex;justify-content:space-between;align-items:center;padding-top:28px;border-top:1px solid var(--border);color:var(--muted);font-size:12px; }
 .cz-footer-social { display:flex;gap:10px; }
 .cz-social-btn { width:34px;height:34px;border:1px solid var(--border2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;text-decoration:none;color:var(--muted);transition:border-color .2s,color .2s; }
+/* SOCIAL */
 .cz-social-btn:hover { border-color:var(--accent);color:var(--accent); }
+
+/* =========================================================================
+   MOBILE RESPONSIVENESS
+========================================================================= */
+@media (max-width: 900px) {
+  /* Hide custom cursor on touch devices */
+  .cz-cursor, .cz-ring { display: none !important; }
+
+  /* Nav */
+  .cz-nav { padding: 14px 24px; }
+  .cz-nav-links { display: none; }
+  .cz-logo { font-size: 24px; }
+
+  /* Hero Section */
+  .cz-hero { flex-direction: column; padding: 100px 24px 60px; gap: 40px; min-height: auto; text-align: center; }
+  .cz-hero-right { flex: none; width: 100%; }
+  .cz-hero-title { font-size: clamp(48px, 12vw, 72px); }
+  .cz-hero-sub { margin-left: auto; margin-right: auto; }
+  .cz-hero-actions { justify-content: center; }
+  .cz-hero-tag { margin: 0 auto 28px; }
+
+  /* Step System */
+  .cz-how { padding: 70px 24px; }
+  .cz-section-header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 40px; }
+  .cz-section-desc { text-align: left; }
+  .cz-steps-row { grid-template-columns: 1fr; gap: 40px; }
+  .cz-steps-row::before { display: none; }
+
+  /* Features */
+  .cz-features { padding: 0 24px 70px; }
+  .cz-features-grid { grid-template-columns: 1fr; gap: 1px; }
+  .cz-feature-card { padding: 32px 24px; }
+
+  /* Stats */
+  .cz-stats { grid-template-columns: repeat(2, 1fr); }
+  .cz-stat-block { padding: 32px 16px; }
+  .cz-stat-num { font-size: 44px; }
+
+  /* App Section & Driver */
+  .cz-app-section, .cz-driver-section { grid-template-columns: 1fr; padding: 70px 24px; gap: 40px; }
+  .cz-driver-section { display: flex; flex-direction: column-reverse; }
+  
+  /* Testimonials */
+  .cz-testimonials { padding: 70px 24px; }
+  .cz-testimonials-grid { grid-template-columns: 1fr; }
+
+  /* CTA */
+  .cz-cta-section { padding: 90px 24px; }
+  .cz-cta-buttons { flex-direction: column; width: 100%; }
+  .cz-cta-buttons button { width: 100%; justify-content: center; }
+
+  /* Footer */
+  .cz-footer { padding: 40px 24px 24px; }
+  .cz-footer-top { grid-template-columns: 1fr; gap: 32px; }
+  .cz-footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+}
