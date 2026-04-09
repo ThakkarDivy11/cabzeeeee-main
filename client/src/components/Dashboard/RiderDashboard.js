@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ChatBot from '../ChatBot/ChatBot';
+import socketService from '../../services/socketService';
 
 /* ── Scroll-reveal hook ───────────────────────────────── */
 function useScrollReveal() {
@@ -228,6 +229,41 @@ const RiderDashboard = () => {
     fetchDashboardData();
   }, [navigate]);
 
+  useEffect(() => {
+    if (!activeRide?._id) return;
+
+    // Connect and join ride room
+    socketService.connect();
+    socketService.joinRide(activeRide._id);
+
+    // Listen for status updates
+    socketService.onStatusUpdate((data) => {
+      console.log('📡 Dashboard: Ride status updated:', data);
+      
+      // Update active ride state
+      setActiveRide(prev => {
+        if (!prev) return null;
+        return { ...prev, ...data.ride, status: data.status };
+      });
+
+      if (data.status === 'accepted') {
+        toast.success('Your ride has been accepted by a driver!', {
+          icon: '🚗',
+          duration: 5000
+        });
+      } else if (data.status === 'cancelled') {
+        toast.error('The ride was cancelled.', { icon: '🚫' });
+        setActiveRide(null);
+      }
+    });
+
+    return () => {
+      // Don't disconnect socket globally, just leave the room and remove listeners
+      socketService.leaveRide(activeRide._id);
+      socketService.removeAllListeners();
+    };
+  }, [activeRide?._id]);
+
   const handleResetWallet = async () => {
     if (!user) return;
 
@@ -268,6 +304,35 @@ const RiderDashboard = () => {
     } catch (error) {
       console.error('Reset wallet error:', error);
       toast.error('An unexpected error occurred while resetting wallet.');
+    }
+  };
+
+  const handleCancelRide = async (rideId) => {
+    const confirmed = window.confirm('Are you sure you want to cancel this ride?');
+    if (!confirmed) return;
+
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiUrl}/api/rides/${rideId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: 'cancelled' })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success('Ride cancelled');
+        setActiveRide(null);
+      } else {
+        toast.error(data.message || 'Failed to cancel');
+      }
+    } catch (err) {
+      console.error('Cancel ride error:', err);
+      toast.error('Network error');
     }
   };
 
@@ -406,12 +471,20 @@ const RiderDashboard = () => {
                   Status: <span className="font-bold text-purple-300">{activeRide.status}</span>
                 </p>
               </div>
-              <button
-                onClick={() => navigate(`/live-ride/${activeRide._id}`)}
-                className="shrink-0 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-black uppercase tracking-widest hover:from-purple-700 hover:to-indigo-700 active:scale-[0.98] transition-all shadow-purple"
-              >
-                Continue
-              </button>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => handleCancelRide(activeRide._id)}
+                  className="px-4 py-2.5 rounded-xl border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => navigate(`/live-ride/${activeRide._id}`)}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-black uppercase tracking-widest hover:from-purple-700 hover:to-indigo-700 active:scale-[0.98] transition-all shadow-purple"
+                >
+                  Continue
+                </button>
+              </div>
             </div>
           )}
 

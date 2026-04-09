@@ -146,6 +146,19 @@ router.put('/:rideId/accept', protect, async (req, res) => {
     await ride.populate('rider', 'name email phone rating');
     await ride.populate('driver', 'name phone rating vehicleInfo');
 
+    // Notify rider in real-time via socket
+    try {
+      const io = getIO();
+      // Emit to the ride-specific room
+      io.to(`ride-${req.params.rideId}`).emit('status-updated', { 
+        status: 'accepted',
+        ride: ride
+      });
+      console.log(`📡 Socket: Ride ${req.params.rideId} accepted by driver ${req.user._id}`);
+    } catch (socketErr) {
+      console.warn('Socket emit error (non-fatal):', socketErr.message);
+    }
+
     res.json({
       success: true,
       message: 'Ride accepted successfully',
@@ -256,9 +269,11 @@ router.put('/:rideId/status', protect, async (req, res) => {
     if (status === 'cancelled') {
       ride.cancelledAt = new Date();
       ride.cancelledBy = req.user.role;
-      if (isDriver) {
-        req.user.driverStatus = 'online';
-        await req.user.save();
+      
+      // If a driver was assigned, set them back to online if the ride is cancelled
+      if (ride.driver) {
+        await User.findByIdAndUpdate(ride.driver, { driverStatus: 'online' });
+        console.log(`✅ Driver ${ride.driver} set back to online after cancellation`);
       }
     }
 

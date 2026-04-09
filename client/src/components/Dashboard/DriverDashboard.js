@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { fetchDriverEarningsSummary } from '../../services/paymentSplitService';
+import socketService from '../../services/socketService';
 
 /* ── Scroll-reveal hook ── */
 function useScrollReveal() {
@@ -229,6 +230,29 @@ const DriverDashboard = () => {
         if (activeData && activeData.success && activeData.data) {
           localStorage.setItem('activeRide', JSON.stringify(activeData.data));
           setActiveRide(activeData.data);
+          
+          // Join socket room for the active ride to listen for cancellations
+          socketService.connect();
+          socketService.joinRide(activeData.data._id);
+          socketService.onStatusUpdate((data) => {
+            if (data.status === 'cancelled') {
+              toast.error('Mission Terminated: The rider has cancelled.', { 
+                icon: '🚫',
+                duration: 6000
+              });
+              setActiveRide(null);
+              localStorage.removeItem('activeRide');
+              setDriverStatus('online');
+
+              // Sync local user state so availability toggle looks correct
+              setUser(prev => {
+                if (!prev) return prev;
+                const updatedUser = { ...prev, driverStatus: 'online' };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                return updatedUser;
+              });
+            }
+          });
         } else {
           localStorage.removeItem('activeRide');
           setActiveRide(null);
@@ -240,6 +264,10 @@ const DriverDashboard = () => {
       }
     };
     fetchDashboardData();
+
+    return () => {
+      socketService.removeAllListeners();
+    };
   }, [navigate]);
 
   useEffect(() => {

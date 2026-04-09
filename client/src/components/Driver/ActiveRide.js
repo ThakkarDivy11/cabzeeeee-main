@@ -116,10 +116,36 @@ const ActiveRide = () => {
     fetchActiveRide();
 
     // Socket Integration
-    const rideId = activeRide?._id || JSON.parse(localStorage.getItem('activeRide'))?._id;
+    const currentActiveRide = JSON.parse(localStorage.getItem('activeRide'));
+    const rideId = activeRide?._id || currentActiveRide?._id;
+    
     if (rideId) {
       socketService.connect();
       socketService.joinRide(rideId);
+
+      socketService.onStatusUpdate((data) => {
+        console.log('📡 Socket: Status updated:', data);
+        
+        if (data.status === 'cancelled') {
+          toast.error('This ride has been cancelled by the rider.', {
+            duration: 5000,
+            icon: '🚫'
+          });
+          
+          // Clear active ride data and redirect
+          localStorage.removeItem('activeRide');
+          setTimeout(() => {
+            navigate('/driver');
+          }, 3000);
+        } else {
+          // Sync other status updates if needed
+          setRideStatus(data.status);
+          if (data.ride) {
+            setActiveRide(data.ride);
+            localStorage.setItem('activeRide', JSON.stringify(data.ride));
+          }
+        }
+      });
     }
 
     return () => {
