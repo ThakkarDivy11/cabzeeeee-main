@@ -187,7 +187,7 @@ const AdminDashboard = () => {
 
     const handleLogout = () => {
         localStorage.clear();
-        navigate('/admin-login');
+        navigate('/');
     };
 
     if (!user) return <div className="p-20 text-center font-bold text-gray-500">Initializing node...</div>;

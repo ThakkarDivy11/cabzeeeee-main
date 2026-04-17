@@ -46,29 +46,29 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const riderLinks = [
-    { name: 'Dashboard',        path: '/rider',           icon: 'home' },
-    { name: 'Book a Ride',      path: '/book-ride-live',  icon: 'map' },
-    { name: 'My Trips',         path: '/ride-history',    icon: 'clock' },
-    { name: 'Payment Methods',  path: '/payment-methods', icon: 'credit-card' },
-    { name: 'Profile',          path: '/user-profile',    icon: 'user' },
+    { name: 'Dashboard', path: '/rider', icon: 'home' },
+    { name: 'Book a Ride', path: '/book-ride-live', icon: 'map' },
+    { name: 'My Trips', path: '/ride-history', icon: 'clock' },
+    { name: 'Payment Methods', path: '/payment-methods', icon: 'credit-card' },
+    { name: 'Profile', path: '/user-profile', icon: 'user' },
   ];
 
   const driverLinks = [
-    { name: 'Dashboard',         path: '/driver',                 icon: 'home' },
-    { name: 'Incoming Requests', path: '/incoming-ride-request',  icon: 'bell' },
-    { name: 'My Trips',          path: '/driver-ride-history',    icon: 'clock' },
-    { name: 'Earnings',          path: '/driver-earnings',        icon: 'currency-rupee' },
-    { name: 'Vehicle Details',   path: '/vehicle-details',        icon: 'truck' },
-    { name: 'Documents',         path: '/driver/documents',       icon: 'document' },
-    { name: 'Profile',           path: '/driver-profile',         icon: 'user' },
+    { name: 'Dashboard', path: '/driver', icon: 'home' },
+    { name: 'Incoming Requests', path: '/incoming-ride-request', icon: 'bell' },
+    { name: 'My Trips', path: '/driver-ride-history', icon: 'clock' },
+    { name: 'Earnings', path: '/driver-earnings', icon: 'currency-rupee' },
+    { name: 'Vehicle Details', path: '/vehicle-details', icon: 'truck' },
+    { name: 'Documents', path: '/driver/documents', icon: 'document' },
+    { name: 'Profile', path: '/driver-profile', icon: 'user' },
   ];
 
   const adminLinks = [
-    { name: 'Dashboard',           path: '/admin',               icon: 'home' },
-    { name: 'All Users',           path: '/admin/users',         icon: 'users' },
-    { name: 'Driver Verification', path: '/admin/verification',  icon: 'shield' },
-    { name: 'System Settings',     path: '/admin/settings',      icon: 'settings' },
-    { name: 'Reports',             path: '/admin/reports',       icon: 'chart' },
+    { name: 'Dashboard', path: '/admin', icon: 'home' },
+    { name: 'All Users', path: '/admin/users', icon: 'users' },
+    { name: 'Driver Verification', path: '/admin/verification', icon: 'shield' },
+    { name: 'System Settings', path: '/admin/settings', icon: 'settings' },
+    { name: 'Reports', path: '/admin/reports', icon: 'chart' },
   ];
 
   const links = user?.role === 'driver' ? driverLinks : user?.role === 'admin' ? adminLinks : riderLinks;
@@ -79,7 +79,7 @@ const Sidebar = ({ isOpen, closeSidebar, user }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   return (
