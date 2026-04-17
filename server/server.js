@@ -101,14 +101,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/uber', {
       const existingAdmin = await User.findOne({ email: 'divythakkar318@gmail.com' });
 
       if (!existingAdmin) {
-        const bcrypt = require('bcryptjs');
-        const salt = bcrypt.genSaltSync(12);
-        const hashedPassword = bcrypt.hashSync('admin123', salt);
-
         const adminUser = new User({
           name: 'divy',
           email: 'divythakkar318@gmail.com',
-          password: hashedPassword,
+          password: 'admin123',
           phone: '+1234567890',
           role: 'admin',
           isVerified: true

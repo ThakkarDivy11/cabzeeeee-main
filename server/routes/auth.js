@@ -72,13 +72,10 @@ router.post('/register', upload.single('profilePicture'), [
       });
     }
 
-    const salt = bcrypt.genSaltSync(12);
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
     const user = new User({
       name,
       email,
-      password: hashedPassword,
+      password,
       phone,
       role,
       profilePicture: profilePicture || ''
