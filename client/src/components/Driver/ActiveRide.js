@@ -186,6 +186,44 @@ const ActiveRide = () => {
     setMapCenter(pCoords);
   };
 
+  // Sync Map Data with ride status and driver location
+  useEffect(() => {
+    if (!activeRide) return;
+
+    let pCoords = [28.6139, 77.2090];
+    let dCoords = [28.6339, 77.2290];
+    
+    if (activeRide.pickupLocation?.coordinates) {
+        pCoords = [activeRide.pickupLocation.coordinates[1], activeRide.pickupLocation.coordinates[0]];
+    }
+    if (activeRide.dropLocation?.coordinates) {
+        dCoords = [activeRide.dropLocation.coordinates[1], activeRide.dropLocation.coordinates[0]];
+    }
+
+    setPickupCoords(pCoords);
+    setDropCoords(dCoords);
+
+    // Calculate dynamic route
+    const currentStatus = activeRide.status;
+    const isHeadingToPickup = ['accepted', 'arrived'].includes(currentStatus);
+    const isHeadingToDrop = ['on_board', 'picked-up'].includes(currentStatus);
+
+    let newRoute = [];
+    if (currentLocation) {
+        if (isHeadingToPickup) {
+            newRoute = [currentLocation, pCoords];
+        } else if (isHeadingToDrop) {
+            newRoute = [currentLocation, dCoords];
+        } else {
+            newRoute = [pCoords, dCoords];
+        }
+    } else {
+        newRoute = [pCoords, dCoords];
+    }
+
+    setRoutePositions(newRoute);
+  }, [activeRide, currentLocation]);
+
   const handleLocationUpdate = (newPos) => {
     setCurrentLocation(newPos);
     if (activeRide?._id) socketService.updateDriverLocation(activeRide._id, newPos[0], newPos[1]);

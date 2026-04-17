@@ -46,7 +46,10 @@ const Routing = ({ start, end, onRouteUpdate }) => {
             routingControlRef.current = L.Routing.control({
                 waypoints: [], routeWhileDragging: false, addWaypoints: false, draggableWaypoints: false,
                 fitSelectedRoutes: true, showAlternatives: false,
-                lineOptions: { styles: [{ color: '#FFD000', weight: 6, opacity: 0.8 }] },
+                lineOptions: { styles: [
+                    { color: 'black', opacity: 0.2, weight: 11 },
+                    { color: '#FFD000', opacity: 1, weight: 6 }
+                ] },
                 createMarker: () => null
             }).addTo(map);
 

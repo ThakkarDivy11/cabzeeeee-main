@@ -59,16 +59,36 @@ const RoutePolyline = ({ positions, color = 'blue' }) => {
         return () => controller.abort();
     }, [normalized, shouldFetch]);
 
-    if (!routePositions || routePositions.length < 2) return null;
+    // Final positions to render: detailed route if available, otherwise just the straight lines
+    const displayPositions = routePositions || (normalized.length >= 2 ? normalized : null);
+
+    if (!displayPositions || displayPositions.length < 2) return null;
 
     return (
-        <Polyline
-            positions={routePositions}
-            color={color}
-            weight={5}
-            opacity={0.7}
-            dashArray="10, 10"
-        />
+        <>
+            {/* Shadow/Border Layer */}
+            <Polyline
+                positions={displayPositions}
+                pathOptions={{
+                    color: '#000000',
+                    weight: 10,
+                    opacity: 0.2,
+                    lineJoin: 'round',
+                    lineCap: 'round'
+                }}
+            />
+            {/* Main Route Core */}
+            <Polyline
+                positions={displayPositions}
+                pathOptions={{
+                    color: '#FFD000',
+                    weight: 6,
+                    opacity: 1,
+                    lineJoin: 'round',
+                    lineCap: 'round'
+                }}
+            />
+        </>
     );
 };
 
