@@ -41,75 +41,157 @@ const UserRideHistory = () => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        month: 'long', 
-        day: 'numeric', 
-        year: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
   const handleDownloadInvoice = (ride) => {
-    try {
-      const doc = new jsPDF();
-      const accent = [255, 208, 0]; // CabZee Yellow
-      doc.setProperties({ title: `Invoice-${ride._id}` });
-      doc.setFillColor(6, 6, 10); doc.rect(0, 0, 210, 40, 'F');
-      doc.setTextColor(255, 208, 0); doc.setFontSize(30); doc.setFont('helvetica', 'bold'); doc.text('CABZEE', 20, 25);
-      doc.setFontSize(10); doc.setTextColor(150, 150, 150); doc.text('OFFICIAL LOGISTICS INVOICE', 20, 32);
-      doc.setTextColor(6, 6, 10); doc.setFontSize(12); doc.setFont('helvetica', 'bold'); doc.text('INVOICE TO:', 20, 60);
-      doc.setFont('helvetica', 'normal'); doc.text(user?.name || 'Valued Client', 20, 67);
-      doc.text(`ID: ${ride._id.substring(0, 8)}...`, 140, 67);
-      doc.setFillColor(245, 245, 245); doc.rect(20, 95, 170, 10, 'F');
-      doc.setFontSize(8); doc.setTextColor(100, 100, 100); doc.text('DESCRIPTION', 25, 101.5); doc.text('AMOUNT', 160, 101.5);
-      doc.setFontSize(10); doc.setTextColor(6, 6, 10); doc.setFont('helvetica', 'normal');
-      doc.text('Base Fare & Logistics', 25, 112); doc.text(`INR ${ride.fare}.00`, 160, 112);
-      doc.setDrawColor(200, 200, 200); doc.line(20, 118, 190, 118);
-      doc.setFont('helvetica', 'bold'); doc.text('TOTAL AMOUNT', 25, 128); doc.text(`INR ${ride.fare}.00`, 160, 128);
-      doc.save(`CabZee-Invoice-${ride._id.substring(0, 8)}.pdf`);
-      toast.success('Invoice downloaded successfully');
-    } catch (error) { toast.error('Failed to generate invoice'); }
-  };
+    const doc = new jsPDF();
 
+    const dark = [10, 15, 35];
+    const accent1 = [99, 102, 241]; // indigo
+    const accent2 = [0, 200, 255];  // cyan
+    const light = [248, 249, 252];
+
+    // LEFT ACCENT STRIP (Unique look 🔥)
+    doc.setFillColor(...accent1);
+    doc.rect(0, 0, 8, 297, "F");
+
+    // HEADER
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(...dark);
+    doc.text("CABZEE", 20, 25);
+
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text("Next-gen Mobility Invoice", 20, 32);
+
+    // INVOICE CARD (Glass feel)
+    doc.setFillColor(...light);
+    doc.roundedRect(20, 45, 170, 35, 6, 6, "F");
+
+    doc.setFontSize(10);
+    doc.setTextColor(80);
+    doc.text("BILLED TO", 25, 55);
+
+    doc.setTextColor(0);
+    doc.text(user?.name || "Client", 25, 62);
+    doc.text(user?.email || "email@email.com", 25, 68);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("INVOICE", 140, 55);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(`ID: ${ride._id.slice(0, 6)}`, 140, 62);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 140, 68);
+
+    // DIVIDER
+    doc.setDrawColor(230);
+    doc.line(20, 90, 190, 90);
+
+    // TITLE
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Ride Summary", 20, 100);
+
+    // TABLE STYLE ROW
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+
+    doc.text("Base Fare", 25, 110);
+    doc.text("Standard Ride", 90, 110);
+    doc.text(`INR ${ride.fare}`, 160, 110);
+
+    // MODERN INFO BLOCK (card style)
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(20, 120, 170, 65, 8, 8, "F");
+
+    doc.setTextColor(60);
+
+    // ROBUST DATA MAPPING
+    const pickup = ride.pickup || ride.pickupLocation?.address || ride.from || ride.source || "";
+    const drop = ride.drop || ride.dropLocation?.address || ride.to || ride.destination || "";
+    const driver = ride.driverName || ride.driver?.name || "";
+    const vehicle = ride.car || ride.vehicle?.name ||
+      (ride.driver?.vehicleInfo ? `${ride.driver.vehicleInfo.make} ${ride.driver.vehicleInfo.model}`.trim() : "");
+
+    // Row 1: Pickup & Driver
+    doc.text(`Pickup`, 25, 128);
+    doc.text(pickup, 25, 134, { maxWidth: 75 });
+
+    doc.text(`Driver`, 110, 128);
+    doc.text(driver, 110, 134);
+
+    // Row 2: Drop & Vehicle
+    doc.text(`Drop`, 25, 155);
+    doc.text(drop, 25, 161, { maxWidth: 75 });
+
+    doc.text(`Vehicle`, 110, 155);
+    doc.text(vehicle, 110, 161);
+
+    // TOTAL PILL (Unique Highlight 🔥)
+    doc.setFillColor(...accent1);
+    doc.roundedRect(60, 190, 100, 18, 10, 10, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.text(`TOTAL: INR ${ride.fare}`, 107, 202, { align: "center" });
+
+    // FOOTER LINE
+    doc.setDrawColor(...accent2);
+    doc.line(20, 220, 190, 220);
+
+    doc.setFontSize(8);
+    doc.setTextColor(120);
+    doc.text("CabZee • Smart Transport Layer", 20, 230);
+
+    doc.save(`CabZee-${ride._id}.pdf`);
+  };
   if (!user) return null;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 transition-colors duration-300 dark:bg-[#06060a] dark:text-gray-100">
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-        
+
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-16">
-            <div>
-                <button 
-                  onClick={() => navigate('/rider')} 
-                  className="group mb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-yellow-600 transition-all hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300"
-                >
-                    <svg className="h-3 w-3 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Back to Dashboard
-                </button>
-                <div className="flex items-center gap-4">
-                    <div className="h-12 w-1.5 rounded-full bg-[#FFD000]"></div>
-                    <div>
-                        <h1 className="text-5xl font-black tracking-tight dark:text-white sm:text-6xl">Activity History</h1>
-                        <p className="mt-2 text-xs font-bold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-600">Review your past journeys & analytics</p>
-                    </div>
-                </div>
+          <div>
+            <button
+              onClick={() => navigate('/rider')}
+              className="group mb-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-yellow-600 transition-all hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300"
+            >
+              <svg className="h-3 w-3 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Dashboard
+            </button>
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-1.5 rounded-full bg-[#FFD000]"></div>
+              <div>
+                <h1 className="text-5xl font-black tracking-tight dark:text-white sm:text-6xl">Activity History</h1>
+                <p className="mt-2 text-xs font-bold uppercase tracking-[0.4em] text-gray-400 dark:text-gray-600">Review your past journeys & analytics</p>
+              </div>
             </div>
-            <div className="flex items-center gap-6 rounded-[2rem] bg-white px-8 py-5 shadow-sm ring-1 ring-gray-100 dark:bg-[rgba(255,255,255,0.02)] dark:ring-[rgba(255,255,255,0.05)]">
-                <div className="text-right">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Total Journeys</p>
-                    <p className="text-3xl font-black tracking-tight text-yellow-600 dark:text-yellow-400">{rides.length}</p>
-                </div>
-                <div className="h-10 w-px bg-gray-100 dark:bg-white/5"></div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-400/10 text-yellow-600 dark:text-yellow-400">
-                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
+          </div>
+          <div className="flex items-center gap-6 rounded-[2rem] bg-white px-8 py-5 shadow-sm ring-1 ring-gray-100 dark:bg-[rgba(255,255,255,0.02)] dark:ring-[rgba(255,255,255,0.05)]">
+            <div className="text-right">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Total Journeys</p>
+              <p className="text-3xl font-black tracking-tight text-yellow-600 dark:text-yellow-400">{rides.length}</p>
             </div>
+            <div className="h-10 w-px bg-gray-100 dark:bg-white/5"></div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-400/10 text-yellow-600 dark:text-yellow-400">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {loading ? (
@@ -120,14 +202,14 @@ const UserRideHistory = () => {
         ) : rides.length === 0 ? (
           <div className="rounded-[3rem] bg-white p-20 text-center shadow-sm ring-1 ring-gray-100 dark:bg-[rgba(255,255,255,0.02)] dark:ring-[rgba(255,255,255,0.05)]">
             <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-700">
-                <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+              <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
             </div>
             <h3 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">The archive is empty.</h3>
             <p className="mt-3 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600">No previous operation records found in the centralized ledger.</p>
-            <button 
-              onClick={() => navigate('/book-ride-live')} 
+            <button
+              onClick={() => navigate('/book-ride-live')}
               className="mt-12 rounded-2xl bg-[#FFD000] px-12 py-5 text-sm font-black tracking-widest uppercase text-black transition-all hover:scale-[1.05] hover:shadow-xl hover:shadow-yellow-400/30 active:scale-95"
             >
               Start Your First Journey
@@ -141,11 +223,10 @@ const UserRideHistory = () => {
                   <div className="mb-10 flex flex-col items-start justify-between gap-6 border-b border-gray-100 pb-10 dark:border-white/5 sm:flex-row sm:items-center">
                     <div>
                       <div className="mb-4 flex items-center gap-4">
-                        <span className={`rounded-xl px-5 py-2 text-[10px] font-black uppercase tracking-widest ${
-                          ride.status === 'completed' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' : 
-                          ride.status === 'cancelled' ? 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400' : 
-                          'bg-yellow-50 text-yellow-600 dark:bg-yellow-400/10 dark:text-yellow-400'
-                        }`}>
+                        <span className={`rounded-xl px-5 py-2 text-[10px] font-black uppercase tracking-widest ${ride.status === 'completed' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' :
+                          ride.status === 'cancelled' ? 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400' :
+                            'bg-yellow-50 text-yellow-600 dark:bg-yellow-400/10 dark:text-yellow-400'
+                          }`}>
                           {ride.status}
                         </span>
                         <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-600">REF: {ride._id.substring(18).toUpperCase()}</span>
@@ -160,44 +241,44 @@ const UserRideHistory = () => {
 
                   <div className="mb-12 grid grid-cols-1 gap-12 md:grid-cols-2">
                     <div className="flex items-start gap-5">
-                        <div className="flex h-12 w-1 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
-                             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                             </svg>
-                        </div>
-                        <div>
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Pick-up Location</p>
-                            <p className="mt-1 text-sm font-bold uppercase leading-relaxed text-gray-700 dark:text-gray-300">{ride.pickupLocation?.address}</p>
-                        </div>
+                      <div className="flex h-12 w-1 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Pick-up Location</p>
+                        <p className="mt-1 text-sm font-bold uppercase leading-relaxed text-gray-700 dark:text-gray-300">{ride.pickupLocation?.address}</p>
+                      </div>
                     </div>
                     <div className="flex items-start gap-5">
-                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400">
-                             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                             </svg>
-                        </div>
-                        <div>
-                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Drop-off Location</p>
-                            <p className="mt-1 text-sm font-bold uppercase leading-relaxed text-gray-700 dark:text-gray-300">{ride.dropLocation?.address}</p>
-                        </div>
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400">
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Drop-off Location</p>
+                        <p className="mt-1 text-sm font-bold uppercase leading-relaxed text-gray-700 dark:text-gray-300">{ride.dropLocation?.address}</p>
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-center justify-between gap-6 border-t border-gray-100 pt-10 dark:border-white/5 sm:flex-row">
                     {ride.driver && (
-                        <div className="flex items-center gap-5">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 font-black text-gray-500 dark:bg-[rgba(255,255,255,0.05)] dark:text-yellow-400">
-                                {ride.driver.name[0]}
-                            </div>
-                            <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-600">Pilot Status</p>
-                                <p className="text-sm font-black uppercase text-gray-900 dark:text-white">{ride.driver.name}</p>
-                            </div>
+                      <div className="flex items-center gap-5">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 font-black text-gray-500 dark:bg-[rgba(255,255,255,0.05)] dark:text-yellow-400">
+                          {ride.driver.name[0]}
                         </div>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-600">Pilot Status</p>
+                          <p className="text-sm font-black uppercase text-gray-900 dark:text-white">{ride.driver.name}</p>
+                        </div>
+                      </div>
                     )}
-                    <button 
+                    <button
                       onClick={() => handleDownloadInvoice(ride)}
                       className="group flex w-full items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white px-8 py-4 text-gray-700 transition-all hover:bg-[#FFD000] hover:text-black hover:border-[#FFD000] hover:scale-[1.05] dark:border-[rgba(255,255,255,0.10)] dark:bg-[rgba(255,255,255,0.05)] dark:text-gray-300 dark:hover:bg-[#FFD000] dark:hover:text-black dark:hover:border-[#FFD000] sm:w-auto"
                     >
